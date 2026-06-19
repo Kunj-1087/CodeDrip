@@ -142,8 +142,8 @@ router.get(
   '/me',
   authenticate,
   asyncHandler(async (req, res) => {
-    const { rows } = await query(
-      'SELECT id, email, first_name, last_name, role, is_verified, created_at FROM users WHERE id = $1',
+    const { rows } = await query<AuthUserRow>(
+      'SELECT id, email, password_hash, first_name, last_name, role FROM users WHERE id = $1',
       [req.user!.id],
     );
     if (rows.length === 0) throw AppError.notFound('User not found');
