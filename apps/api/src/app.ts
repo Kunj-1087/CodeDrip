@@ -22,9 +22,22 @@ app.set('trust proxy', 1);
 // is relaxed so the Next.js origin can load uploaded product images.
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 
-// CORS allow-list: ONLY the configured frontend origin, with credentials so the
-// HTTP-only auth cookies are accepted (INVARIANT: secrets stay server-side).
-app.use(cors({ origin: env.corsOrigin, credentials: true }));
+// CORS allow-list with credentials so the HTTP-only auth cookies are accepted.
+// Production: ONLY origins in CORS_ORIGIN. Development: also accept any
+// localhost/127.0.0.1 port, so `npm run dev:web` works even if Next picks 3001
+// because 3000 is busy. Requests with no Origin (curl, same-origin) pass through.
+app.use(
+  cors({
+    credentials: true,
+    origin(origin, callback) {
+      if (!origin) return callback(null, true);
+      const allowed =
+        env.corsOrigins.includes(origin) ||
+        (!env.isProduction && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin));
+      callback(null, allowed);
+    },
+  }),
+);
 
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());

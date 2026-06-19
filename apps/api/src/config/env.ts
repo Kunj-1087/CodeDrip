@@ -30,7 +30,8 @@ const envSchema = z.object({
 
   BCRYPT_ROUNDS: z.coerce.number().min(10).max(15).default(12),
 
-  CORS_ORIGIN: z.string().url().default('http://localhost:3000'),
+  // One origin, or a comma-separated list (e.g. "http://localhost:3000,http://localhost:3001").
+  CORS_ORIGIN: z.string().default('http://localhost:3000'),
 
   UPLOAD_DIR: z.string().default('./uploads'),
   MAX_FILE_SIZE: z.coerce.number().default(5 * 1024 * 1024),
@@ -67,7 +68,10 @@ export const env = {
   accessTokenExpiry: e.ACCESS_TOKEN_EXPIRY,
   refreshTokenExpiry: e.REFRESH_TOKEN_EXPIRY,
   bcryptRounds: e.BCRYPT_ROUNDS,
-  corsOrigin: e.CORS_ORIGIN,
+  // Primary origin (used to build absolute links e.g. password-reset URLs).
+  corsOrigin: e.CORS_ORIGIN.split(',')[0].trim(),
+  // Full allow-list for CORS.
+  corsOrigins: e.CORS_ORIGIN.split(',').map((o) => o.trim()).filter(Boolean),
   uploadDir: e.UPLOAD_DIR,
   maxFileSize: e.MAX_FILE_SIZE,
   smtp: { host: e.SMTP_HOST, port: e.SMTP_PORT, user: e.SMTP_USER, pass: e.SMTP_PASS },
