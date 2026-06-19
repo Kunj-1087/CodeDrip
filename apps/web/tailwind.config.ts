@@ -22,7 +22,11 @@ const config: Config = {
         muted: 'rgb(var(--color-text-muted) / <alpha-value>)',
       },
       fontFamily: {
+        // Dual-font strategy (Precision Core): Inter for everything, a mono stack
+        // for technical values (specs, SKUs, prices in data tables). Self-hosted/
+        // system stacks only — no runtime Google Fonts fetch.
         sans: [
+          'Inter',
           'system-ui',
           '-apple-system',
           'BlinkMacSystemFont',
@@ -32,11 +36,23 @@ const config: Config = {
           'Arial',
           'sans-serif',
         ],
+        mono: [
+          'ui-monospace',
+          'SFMono-Regular',
+          'Menlo',
+          'JetBrains Mono',
+          'Cascadia Code',
+          'Consolas',
+          'monospace',
+        ],
       },
-      borderRadius: { xl: '0.875rem', '2xl': '1.125rem' },
+      // Precision Core shapes: 4px standard, 8px for large containers, pills for badges.
+      borderRadius: { DEFAULT: '0.25rem', md: '0.375rem', lg: '0.5rem', xl: '0.75rem' },
       boxShadow: {
-        card: '0 1px 2px rgba(15,23,42,0.04), 0 4px 16px rgba(15,23,42,0.06)',
-        'card-hover': '0 2px 4px rgba(15,23,42,0.06), 0 12px 28px rgba(15,23,42,0.12)',
+        // Depth comes from 1px outlines + tonal layers; shadow is reserved for
+        // hover/elevated surfaces only (subtle ambient).
+        card: '0 1px 2px rgba(15,23,42,0.04)',
+        'card-hover': '0 4px 12px rgba(15,23,42,0.08)',
       },
       transitionDuration: { DEFAULT: '200ms' },
       keyframes: {

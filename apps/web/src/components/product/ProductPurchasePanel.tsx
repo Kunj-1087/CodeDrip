@@ -6,6 +6,7 @@ import { useToast } from '@/context/ToastContext';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
 import { formatCurrency } from '@/lib/format';
+import { topSpecs } from '@/lib/specs';
 import { Badge } from '@/components/ui/Badge';
 import { StarRating } from '@/components/ui/StarRating';
 import { VariantSelector } from './VariantSelector';
@@ -55,6 +56,15 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
         )}
         {product.brand && <span className="text-sm text-muted">by {product.brand}</span>}
       </div>
+
+      {/* Key specs as monospace pills, mirroring the spec sheet. */}
+      {topSpecs(product, 4).length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {topSpecs(product, 4).map((s) => (
+            <span key={s} className="spec-pill">{s}</span>
+          ))}
+        </div>
+      )}
 
       <div className="flex items-baseline gap-3">
         <span className="text-3xl font-bold text-ink">{formatCurrency(price, currency)}</span>

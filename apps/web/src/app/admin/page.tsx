@@ -73,11 +73,13 @@ export default function AdminDashboard() {
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (
           <div key={c.label} className="card p-5">
-            <p className="text-sm text-muted">{c.label}</p>
+            <p className="eyebrow">{c.label}</p>
             {c.value === null ? (
-              <Skeleton className="mt-2 h-7 w-24" />
+              <Skeleton className="mt-2 h-9 w-28" />
             ) : (
-              <p className={`mt-1 text-2xl font-bold ${c.alert ? 'text-red-600' : 'text-ink'}`}>{c.value}</p>
+              <p className={`mt-1.5 text-3xl font-bold tracking-tight ${c.alert ? 'text-red-600' : 'text-ink'}`}>
+                {c.value}
+              </p>
             )}
           </div>
         ))}

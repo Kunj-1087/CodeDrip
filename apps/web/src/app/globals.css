@@ -41,6 +41,11 @@
     color: rgb(var(--color-text));
     font-feature-settings: 'cv11', 'ss01';
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* Headlines use negative tracking for the precise, "Linear.app" aesthetic. */
+  h1, h2, h3 {
+    letter-spacing: -0.02em;
   }
   /* Visible keyboard focus everywhere (accessibility). */
   :focus-visible {
@@ -51,29 +56,45 @@
 }
 
 @layer components {
-  /* Reusable primitives built only from design tokens. */
+  /* Reusable primitives built only from design tokens. Shapes are disciplined:
+     4–6px radii (precision/industrial feel), 8px for large cards, pills for tags. */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold
-           transition-[background,box-shadow,transform] duration-200 disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold
+           transition-[background,box-shadow,transform,border-color] duration-200
+           disabled:cursor-not-allowed disabled:opacity-60;
   }
   .btn-primary {
-    @apply btn bg-primary text-white shadow-sm hover:bg-primary-hover active:translate-y-px;
+    @apply btn bg-primary text-white hover:bg-primary-hover active:translate-y-px;
   }
   .btn-secondary {
     @apply btn border border-border bg-surface text-ink hover:bg-surface-2;
+  }
+  /* Navy/ink solid button for high-commitment actions (e.g. Place Order). */
+  .btn-dark {
+    @apply btn bg-secondary text-white hover:bg-secondary/90 active:translate-y-px;
   }
   .btn-ghost {
     @apply btn text-ink hover:bg-surface-2;
   }
   .input {
-    @apply w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-ink
-           placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30;
+    @apply w-full rounded-md border border-border bg-surface px-3.5 py-2.5 text-sm text-ink
+           placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15;
   }
+  /* Level-1 surface: white + 1px border, no resting shadow (tonal depth). */
   .card {
-    @apply rounded-2xl border border-border bg-surface shadow-card;
+    @apply rounded-lg border border-border bg-surface;
   }
   .label {
     @apply mb-1.5 block text-sm font-medium text-ink;
+  }
+  /* Monospace technical tag for specs/SKUs (e.g. 16GB · DDR5-5600 · NVMe). */
+  .spec-pill {
+    @apply inline-flex items-center rounded border border-border bg-surface-2 px-2 py-0.5
+           font-mono text-[11px] font-medium leading-5 text-muted;
+  }
+  /* Small uppercase eyebrow label. */
+  .eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.06em] text-muted;
   }
   /* Skeleton shimmer for loading states. */
   .skeleton {

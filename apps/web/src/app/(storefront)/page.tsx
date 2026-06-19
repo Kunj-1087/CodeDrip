@@ -70,39 +70,50 @@ export default async function HomePage() {
     <>
       <HomeJsonLd settings={settings} />
 
-      {/* Hero */}
-      <section className="border-b border-border bg-surface">
-        <div className="container-px grid items-center gap-8 py-16 md:grid-cols-2 md:py-24">
-          <div className="animate-slide-up">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-primary">RAM · SSD · HDD · Accessories</p>
-            <h1 className="text-4xl font-bold leading-tight text-ink md:text-5xl">
-              The right memory and storage, with specs you can actually trust.
+      {/* Hero — dark "deep space" panel with a subtle circuit-trace pattern. */}
+      <section className="relative overflow-hidden bg-secondary text-white">
+        <CircuitPattern />
+        <div className="container-px relative py-20 md:py-28">
+          <div className="max-w-2xl animate-slide-up">
+            <p className="eyebrow text-white/55">RAM · SSD · HDD · Accessories</p>
+            <h1 className="mt-3 text-4xl font-bold leading-[1.08] tracking-tight md:text-6xl">
+              The parts your build has been waiting for.
             </h1>
-            <p className="mt-4 max-w-prose text-lg text-muted">
-              Every part lists its real capacity, speed, interface, and form factor — so you buy what fits the first
-              time. Genuine stock, warrantied, shipped the same day.
+            <p className="mt-5 max-w-xl text-lg text-white/70">
+              RAM, SSDs, and HDDs from brands that don’t cut corners. Precision-engineered storage and memory for
+              uncompromised performance.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/shop" className="btn-primary px-6 py-3 text-base">
-                Shop all parts
+              <Link href="/shop?category=ram" className="btn-primary px-6 py-3 text-base">
+                Shop RAM <span aria-hidden>→</span>
               </Link>
-              <Link href="/shop?category=ssd" className="btn-secondary px-6 py-3 text-base">
-                Browse SSDs
+              <Link href="/shop" className="btn border border-white/25 px-6 py-3 text-base text-white hover:bg-white/10">
+                Browse all parts
               </Link>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            {categories.slice(0, 4).map((c) => (
-              <Link
-                key={c.id}
-                href={`/shop?category=${c.slug}`}
-                className="card flex flex-col justify-between p-5 transition-shadow hover:shadow-card-hover"
-              >
-                <span className="text-lg font-semibold text-ink">{c.name}</span>
-                <span className="mt-2 text-sm text-muted">{c.productCount ?? 0} products</span>
-              </Link>
-            ))}
-          </div>
+        </div>
+      </section>
+
+      {/* Category strip — icon tiles with live product counts. */}
+      <section className="container-px relative z-10 -mt-8">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {categories.slice(0, 4).map((c) => (
+            <Link
+              key={c.id}
+              href={`/shop?category=${c.slug}`}
+              className="card group flex items-center gap-3 p-5 transition-[box-shadow,border-color] hover:border-primary/40 hover:shadow-card-hover"
+            >
+              <span className="grid h-11 w-11 flex-shrink-0 place-items-center rounded-md bg-surface-2 text-muted group-hover:text-primary">
+                <CategoryIcon slug={c.slug} />
+              </span>
+              <span className="min-w-0">
+                <span className="block truncate font-semibold text-ink">{c.name}</span>
+                <span className="block text-sm text-muted">{c.productCount ?? 0} products</span>
+              </span>
+              <span className="ml-auto text-muted transition-transform group-hover:translate-x-0.5">→</span>
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -200,4 +211,47 @@ export default async function HomePage() {
       </section>
     </>
   );
+}
+
+// Subtle circuit-trace background for the hero — pure SVG, low opacity, not a photo.
+function CircuitPattern() {
+  return (
+    <svg
+      aria-hidden
+      className="pointer-events-none absolute inset-0 h-full w-full text-white/[0.07]"
+      preserveAspectRatio="xMidYMid slice"
+    >
+      <defs>
+        <pattern id="circuit" width="64" height="64" patternUnits="userSpaceOnUse">
+          <path d="M0 32h20m0 0v20m0-20a4 4 0 1 0 8 0 4 4 0 0 0-8 0m12 0h32M48 0v20m0 0a4 4 0 1 0 0 8 4 4 0 0 0 0-8m0 8v36"
+            fill="none" stroke="currentColor" strokeWidth="1.5" />
+          <circle cx="32" cy="32" r="2" fill="currentColor" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#circuit)" />
+    </svg>
+  );
+}
+
+// Minimal line icons per category, so the strip reads as hardware, not clip-art.
+function CategoryIcon({ slug }: { slug: string }) {
+  const common = { className: 'h-5 w-5', viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.75 } as const;
+  switch (slug) {
+    case 'ram':
+      return (
+        <svg {...common}><rect x="2" y="7" width="20" height="10" rx="1" /><path d="M6 17v2M10 17v2M14 17v2M18 17v2M6 10v4M10 10v4M14 10v4M18 10v4" /></svg>
+      );
+    case 'ssd':
+      return (
+        <svg {...common}><rect x="3" y="6" width="18" height="12" rx="2" /><path d="M7 10h6" /><circle cx="17" cy="14" r="1" /></svg>
+      );
+    case 'hdd':
+      return (
+        <svg {...common}><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="2.5" /><path d="m16 16 3 3" /></svg>
+      );
+    default:
+      return (
+        <svg {...common}><path d="M4 9a3 3 0 0 1 3-3h2a3 3 0 0 1 0 6H7" /><path d="M20 15a3 3 0 0 1-3 3h-2a3 3 0 0 1 0-6h2" /><path d="M9 12h6" /></svg>
+      );
+  }
 }

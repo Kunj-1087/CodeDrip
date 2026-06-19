@@ -77,11 +77,11 @@ export default async function ProductPage({ params }: { params: { slug: string }
         {specs.length > 0 && (
           <div>
             <h2 className="text-xl font-bold text-ink">Specifications</h2>
-            <dl className="mt-3 divide-y divide-border overflow-hidden rounded-2xl border border-border">
+            <dl className="mt-3 divide-y divide-border overflow-hidden rounded-lg border border-border">
               {specs.map(([key, value]) => (
                 <div key={key} className="flex justify-between gap-4 px-4 py-3 odd:bg-surface-2">
                   <dt className="text-sm font-medium capitalize text-muted">{key.replace(/_/g, ' ')}</dt>
-                  <dd className="text-sm text-ink">{String(value)}</dd>
+                  <dd className="font-mono text-sm text-ink">{String(value)}</dd>
                 </div>
               ))}
             </dl>
