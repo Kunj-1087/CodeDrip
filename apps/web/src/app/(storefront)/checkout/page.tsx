@@ -42,10 +42,19 @@ export default function CheckoutPage() {
     if (status !== 'authenticated') return;
     if (user) setAddress((a) => ({ ...a, fullName: [user.firstName, user.lastName].filter(Boolean).join(' ') }));
     api
-      .get<{ addresses: Array<ShippingAddress & { isDefault: boolean }> }>('/addresses')
+      .get<{ addresses: Array<{ line1: string; line2?: string; city: string; state?: string; postalCode?: string; country?: string; isDefault: boolean }> }>('/addresses')
       .then((r) => {
         const def = r.addresses.find((x) => x.isDefault) ?? r.addresses[0];
-        if (def) setAddress((a) => ({ ...a, ...def, fullName: a.fullName || def.label || a.fullName }));
+        if (def)
+          setAddress((a) => ({
+            ...a,
+            line1: def.line1,
+            line2: def.line2,
+            city: def.city,
+            state: def.state,
+            postalCode: def.postalCode,
+            country: def.country ?? 'India',
+          }));
       })
       .catch(() => undefined);
   }, [status, user]);

@@ -3,30 +3,33 @@
 @tailwind utilities;
 
 /* ===========================================================================
-   Design tokens. Brand colors (--color-primary/secondary/accent) are SEEDED
-   here with sane defaults and then OVERWRITTEN at runtime by StoreContext using
-   the store_settings DB row — so the palette is data-driven (white-label).
-   Surface/text tokens flip for dark mode via the .dark class on <html>.
+   Design tokens. Colors are stored as SPACE-SEPARATED RGB CHANNELS (not hex) so
+   Tailwind's alpha modifiers work — e.g. `bg-primary/10`, `ring-primary/30`.
+   Tailwind maps each token to `rgb(var(--color-x) / <alpha-value>)`.
+
+   Brand channels (--color-primary/secondary/accent) are seeded here and then
+   OVERWRITTEN at runtime by StoreContext from the store_settings DB row — so the
+   palette is data-driven (white-label). Surface/text flip for dark mode.
    =========================================================================== */
 :root {
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
-  --color-secondary: #0f172a;
-  --color-accent: #f59e0b;
+  --color-primary: 37 99 235;
+  --color-primary-hover: 29 78 216;
+  --color-secondary: 15 23 42;
+  --color-accent: 245 158 11;
 
-  --color-surface: #ffffff;
-  --color-surface-2: #f8fafc;
-  --color-border: #e2e8f0;
-  --color-text: #0f172a;
-  --color-text-muted: #64748b;
+  --color-surface: 255 255 255;
+  --color-surface-2: 248 250 252;
+  --color-border: 226 232 240;
+  --color-text: 15 23 42;
+  --color-text-muted: 100 116 139;
 }
 
 .dark {
-  --color-surface: #0b1120;
-  --color-surface-2: #111a2e;
-  --color-border: #233047;
-  --color-text: #e8eefb;
-  --color-text-muted: #94a3b8;
+  --color-surface: 11 17 32;
+  --color-surface-2: 17 26 46;
+  --color-border: 35 48 71;
+  --color-text: 232 238 251;
+  --color-text-muted: 148 163 184;
 }
 
 @layer base {
@@ -34,27 +37,27 @@
     scroll-behavior: smooth;
   }
   body {
-    background-color: var(--color-surface-2);
-    color: var(--color-text);
+    background-color: rgb(var(--color-surface-2));
+    color: rgb(var(--color-text));
     font-feature-settings: 'cv11', 'ss01';
     -webkit-font-smoothing: antialiased;
   }
   /* Visible keyboard focus everywhere (accessibility). */
   :focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid rgb(var(--color-primary));
     outline-offset: 2px;
     border-radius: 4px;
   }
 }
 
 @layer components {
-  /* Reusable button + input primitives built ONLY from Tailwind tokens. */
+  /* Reusable primitives built only from design tokens. */
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold
            transition-[background,box-shadow,transform] duration-200 disabled:cursor-not-allowed disabled:opacity-60;
   }
   .btn-primary {
-    @apply btn bg-primary text-white hover:bg-primary-hover active:translate-y-px shadow-sm;
+    @apply btn bg-primary text-white shadow-sm hover:bg-primary-hover active:translate-y-px;
   }
   .btn-secondary {
     @apply btn border border-border bg-surface text-ink hover:bg-surface-2;

@@ -9,15 +9,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: 'var(--color-primary)',
-        'primary-hover': 'var(--color-primary-hover)',
-        secondary: 'var(--color-secondary)',
-        accent: 'var(--color-accent)',
-        surface: 'var(--color-surface)',
-        'surface-2': 'var(--color-surface-2)',
-        border: 'var(--color-border)',
-        ink: 'var(--color-text)',
-        muted: 'var(--color-text-muted)',
+        // rgb(var(--token) / <alpha-value>) lets Tailwind apply opacity modifiers
+        // (e.g. bg-primary/10) to runtime-injected, channel-based brand colors.
+        primary: 'rgb(var(--color-primary) / <alpha-value>)',
+        'primary-hover': 'rgb(var(--color-primary-hover) / <alpha-value>)',
+        secondary: 'rgb(var(--color-secondary) / <alpha-value>)',
+        accent: 'rgb(var(--color-accent) / <alpha-value>)',
+        surface: 'rgb(var(--color-surface) / <alpha-value>)',
+        'surface-2': 'rgb(var(--color-surface-2) / <alpha-value>)',
+        border: 'rgb(var(--color-border) / <alpha-value>)',
+        ink: 'rgb(var(--color-text) / <alpha-value>)',
+        muted: 'rgb(var(--color-text-muted) / <alpha-value>)',
       },
       fontFamily: {
         sans: [
