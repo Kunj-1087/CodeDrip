@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//d/d/Main Projects/Ecom/**)",
+      "Read(//d/d/Main Projects/**)"
+    ]
+  }
+}

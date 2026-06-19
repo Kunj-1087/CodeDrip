@@ -1,0 +1,43 @@
+# =============================================================================
+# OursCart — local infrastructure.
+# This compose file provisions ONLY the database (and an optional DB UI).
+# The app itself runs on the host via `npm run dev:api` / `npm run dev:web`,
+# which keeps the dev loop fast and avoids container/Next.js HMR friction.
+#
+#   docker compose up -d            # start Postgres
+#   npm run db:reset                # create schema + seed
+#   npm run dev:api                 # terminal 1
+#   npm run dev:web                 # terminal 2
+# =============================================================================
+services:
+  db:
+    image: postgres:17
+    container_name: ourscart-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ourscart
+    ports:
+      - '5432:5432'
+    volumes:
+      - ourscart_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d ourscart']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Optional lightweight DB browser at http://localhost:8080 (system: PostgreSQL,
+  # server: db, user/pass: postgres, db: ourscart). Start with: docker compose up -d adminer
+  adminer:
+    image: adminer:4
+    container_name: ourscart-adminer
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - '8080:8080'
+
+volumes:
+  ourscart_db_data:
