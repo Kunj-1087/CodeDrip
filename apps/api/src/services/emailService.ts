@@ -39,6 +39,17 @@ export async function sendEmail(to: string, subject: string, html: string, text?
   return { mocked: false };
 }
 
+export function orderConfirmationEmail(orderNumber: string, total: string, currency: string) {
+  return {
+    subject: `Your OursCart order ${orderNumber} is confirmed`,
+    text: `Thanks for your order! ${orderNumber} is confirmed. Total charged: ${currency} ${total}. We'll email you when it ships.`,
+    html: `<h2>Order confirmed 🎉</h2>
+           <p>Thanks for your order. <strong>${orderNumber}</strong> is confirmed.</p>
+           <p>Total charged: <strong>${currency} ${total}</strong></p>
+           <p>We'll send tracking as soon as it ships.</p>`,
+  };
+}
+
 export function passwordResetEmail(resetUrl: string) {
   return {
     subject: 'Reset your OursCart password',
