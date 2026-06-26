@@ -58,15 +58,18 @@ export function ScrollReveal({
 
 export function ScrollRevealItem({ 
   children, 
+  className,
   y = 30, 
   duration = 0.5 
 }: { 
   children: ReactNode; 
+  className?: string;
   y?: number; 
   duration?: number 
 }) {
   return (
     <motion.div
+      className={className}
       variants={{
         hidden: { opacity: 0, y },
         visible: { opacity: 1, y: 0, transition: { duration, ease: [0.215, 0.61, 0.355, 1] } },

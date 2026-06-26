@@ -5,7 +5,10 @@ import { cn } from '@/lib/cn';
 type Variant = 'primary' | 'secondary' | 'danger' | 'dark' | 'ghost';
 type Size = 'sm' | 'md' | 'lg' | 'xl';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  'onDrag' | 'onDragStart' | 'onDragEnd' | 'onAnimationStart' | 'onAnimationEnd'
+> {
   variant?: Variant;
   size?: Size;
   loading?: boolean;

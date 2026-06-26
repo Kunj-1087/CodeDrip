@@ -15,6 +15,10 @@ import { StarRating } from './StarRating';
 import { StockBadge } from './StockBadge';
 import { cn } from '@/lib/cn';
 
+// Wrappers to avoid SWC JSX dot-notation parsing issue with framer-motion v12
+const MotionDiv = motion.div;
+const MotionButton = motion.button;
+
 // The single most important component in the store. Built entirely from tokens so
 // it retheme-s with the palette and works in light/dark with no per-class overrides.
 export function ProductCard({ product }: { product: Product }) {
@@ -113,7 +117,7 @@ export function ProductCard({ product }: { product: Product }) {
   const isNew = product.tags?.some((t) => t.slug === 'new' || t.name.toLowerCase() === 'new');
 
   return (
-    <motion.div
+    <MotionDiv
       initial="rest"
       whileHover="hover"
       animate="rest"
@@ -126,7 +130,7 @@ export function ProductCard({ product }: { product: Product }) {
     >
       <div className="relative overflow-hidden aspect-square">
         <Link href={`/shop/${product.slug}`} className="block h-full w-full bg-surface-2 relative">
-          <motion.div
+          <MotionDiv
             variants={{
               rest: { scale: 1 },
               hover: { scale: 1.05 }
@@ -140,11 +144,11 @@ export function ProductCard({ product }: { product: Product }) {
               className="h-full w-full object-cover"
               sizes="(max-width: 480px) 50vw, (max-width: 768px) 33vw, 25vw"
             />
-          </motion.div>
+          </MotionDiv>
 
           {/* Secondary image crossfade */}
           {product.images && product.images.length > 1 && (
-            <motion.div
+            <MotionDiv
               variants={{
                 rest: { opacity: 0 },
                 hover: { opacity: 1 }
@@ -158,7 +162,7 @@ export function ProductCard({ product }: { product: Product }) {
                 className="h-full w-full object-cover"
                 sizes="(max-width: 480px) 50vw, (max-width: 768px) 33vw, 25vw"
               />
-            </motion.div>
+            </MotionDiv>
           )}
 
           {/* Subtle overlay shadow */}
@@ -286,7 +290,7 @@ export function ProductCard({ product }: { product: Product }) {
 
         {/* Desktop Quick Add Button (Slides up on Hover) */}
         <div className="hidden lg:block overflow-hidden w-full relative mt-4 h-[38px]">
-          <motion.button
+          <MotionButton
             variants={{
               rest: { y: 40, opacity: 0 },
               hover: { y: 0, opacity: 1 }
@@ -302,10 +306,10 @@ export function ProductCard({ product }: { product: Product }) {
             aria-label={`Add ${product.name} to cart`}
           >
             {adding ? 'staging...' : product.inStock ? 'git add <shirt>' : '404: OOS'}
-          </motion.button>
+          </MotionButton>
         </div>
       </div>
-    </div>
+    </MotionDiv>
   );
 }
 

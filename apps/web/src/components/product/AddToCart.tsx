@@ -18,7 +18,7 @@ export function AddToCart({
   maxQuantity: number;
   /** Render a compact inline version (used in the sticky mobile bar vs full page). */
   compact?: boolean;
-  imageUrl: string;
+  imageUrl: string | null;
 }) {
   const { addItem } = useCart();
   const { notify } = useToast();

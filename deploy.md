@@ -1,133 +1,193 @@
-https://github.com/Kunj-1087/CodeDrip.git# Production Deployment Guide
+# Production Deployment Guide — CodeDrip
 
-This guide details how to build, configure, and deploy the **CodeDrip** application (Next.js frontend, Express backend, PostgreSQL database) to production.
+This guide walks you through deploying **CodeDrip** (Next.js frontend + Express API + PostgreSQL) to production using **Vercel** and **Railway**.
 
 ---
 
-## Architecture Overview
+## Architecture
 
-CodeDrip is configured as a monorepo using npm workspaces:
-* `/apps/web` — Next.js 14 Storefront and Admin panel.
-* `/apps/api` — Express REST API server.
-* `/db` — PostgreSQL database migrations and schemas.
-
-You will deploy each component separately to maximize reliability, scalability, and ease of updates.
-
-```mermaid
-graph TD
-    User([User's Browser]) -->|HTTPS| NextJS[Next.js Frontend on Vercel]
-    NextJS -->|Client-side API requests| Express[Express API on Railway/Render/VPS]
-    Express -->|SQL Queries| Postgres[(PostgreSQL on Neon/Supabase/RDS)]
-    Express -->|Static Images| S3[AWS S3 / Object Storage]
+```
+┌──────────────┐     HTTPS      ┌──────────────────┐     SQL      ┌─────────────────┐
+│   Browser    │ ──────────────▶│  Next.js on Vercel│ ───────────▶│ PostgreSQL on    │
+│              │                │  (apps/web)       │             │ Railway / Neon   │
+└──────────────┘                └────────┬──────────┘             └─────────────────┘
+                                         │ client-side API
+                                         ▼
+                                ┌──────────────────┐
+                                │ Express on Railway│
+                                │ (apps/api)        │
+                                └──────────────────┘
 ```
 
 ---
 
-## Step 1: Database Setup (PostgreSQL)
+## Step 1: Push to GitHub
 
-You need a PostgreSQL database instance (version 15+). Excellent managed solutions include **Neon**, **Supabase**, **Aiven**, or **AWS RDS**.
-
-1. **Create the Database Instance:** Create a new database cluster on your provider and copy the connection string (`DATABASE_URL`). It will look like:
-   `postgresql://username:password@hostname:5432/dbname?sslmode=require`
-
-2. **Run Migrations:** Configure your local environment variables temporarily to point to production and run:
-   ```bash
-   DATABASE_URL="your_production_connection_string" npm run db:migrate
-   ```
-   *(Note: This executes the numeric schema scripts inside `/db` in sequence to create your tables and database triggers).*
-
-3. **Optional: Seed Demo Data:** If you want to populate the database with initial developer t-shirts and coupons, run:
-   ```bash
-   DATABASE_URL="your_production_connection_string" npm run db:seed
-   ```
+```bash
+git add .
+git commit -m "chore: ready for production deploy"
+git push origin main
+```
 
 ---
 
-## Step 2: Backend API Deployment (Express)
+## Step 2: Deploy the Database (Railway)
 
-Deploy the Express application (`/apps/api`) to a platform that supports persistent Node.js servers, such as **Railway**, **Render**, **Fly.io**, or your own **VPS (Ubuntu/Debian)**.
-
-### Configuration on Render / Railway:
-1. **Root Directory:** Set root folder configuration to `./apps/api` (or keep workspace root and use compile scripts).
-2. **Build Command:**
+1. Go to [railway.app](https://railway.app) → **New Project** → **PostgreSQL**.
+2. Railway will provision a PostgreSQL instance and auto-generate a `DATABASE_URL`.
+3. Copy the connection string — you'll need it for the API service.
+4. *(Optional)* Run migrations locally against the production database:
    ```bash
-   npm install && npm run build
-   ```
-3. **Start Command:**
-   ```bash
-   npm run start:api
+   DATABASE_URL="your_railway_postgres_url" npm run db:migrate --workspace=apps/api
+   DATABASE_URL="your_railway_postgres_url" npm run db:seed --workspace=apps/api
    ```
 
-### Production Environment Variables:
+> **Tip:** Alternatively, use **Neon** (free tier) or **Supabase** for an external managed database if you prefer.
 
-| Variable | Description | Example / Recommended Value |
+---
+
+## Step 3: Deploy the API (Railway)
+
+1. In your Railway project, click **+ New** → **GitHub Repo** → select your CodeDrip repo.
+2. **Service Settings:**
+   - **Root Directory:** `/apps/api`
+   - **Build Command:** `npm install && npm run build`
+   - **Start Command:** `npm run start`
+3. Go to the **Variables** tab and add:
+
+| Variable | Value |
+|---|---|
+| `NODE_ENV` | `production` |
+| `PORT` | `4000` |
+| `DATABASE_URL` | *(paste from Step 2)* |
+| `JWT_SECRET` | *(generate: `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`)* |
+| `JWT_REFRESH_SECRET` | *(generate a DIFFERENT one)* |
+| `ACCESS_TOKEN_EXPIRY` | `15m` |
+| `REFRESH_TOKEN_EXPIRY` | `7d` |
+| `BCRYPT_ROUNDS` | `12` |
+| `CORS_ORIGIN` | `https://your-app.vercel.app` |
+| `SITE_URL` | `https://your-app.vercel.app` |
+| `UPLOAD_DIR` | `./uploads` |
+| `LOG_LEVEL` | `info` |
+
+4. Railway will generate a public URL like `https://your-api.up.railway.app`. Copy this — you'll need it for Vercel.
+
+> **Tip:** Use Railway's "Variables" tab to reference the database URL automatically: `${{Postgres.DATABASE_URL}}`.
+
+---
+
+## Step 4: Deploy the Frontend (Vercel)
+
+1. Go to [vercel.com](https://vercel.com) → **New Project** → import your GitHub repo.
+2. **Framework Preset:** Next.js
+3. **Root Directory:** `apps/web`
+4. **Build Command:** (leave default — Vercel detects it)
+5. **Output Directory:** `.next`
+6. Go to **Environment Variables** and add:
+
+| Variable | Value |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | `https://your-api.up.railway.app` |
+| `NEXT_PUBLIC_SITE_URL` | `https://your-app.vercel.app` |
+| `NEXT_PUBLIC_STORE_NAME` | `CodeDrip` |
+| `GOOGLE_SEARCH_CONSOLE_VERIFICATION` | *(optional)* |
+
+7. Click **Deploy**.
+
+> **Note:** The `vercel.json` in the repo root already configures security headers and a cron job for token cleanup.
+
+---
+
+## Step 5: Post-Deploy Verification
+
+1. **Frontend:** Visit your Vercel URL — the storefront should load.
+2. **API:** Visit `https://your-api.up.railway.app/api/health` — should return `{"status":"ok"}`.
+3. **Auth:** Register a new account on the storefront — the first user automatically becomes **admin**.
+4. **Images:** Upload a product image via the admin panel — confirm it persists across deploys.
+
+---
+
+## Environment Variable Reference
+
+### Frontend (Vercel)
+
+| Variable | Required | Description |
 |---|---|---|
-| `NODE_ENV` | Mode | `production` (enables compression, disables logs leak) |
-| `PORT` | API Port | `4001` (or whichever port your provider assigns automatically) |
-| `DATABASE_URL` | Postgres URI | `postgresql://...` |
-| `JWT_SECRET` | Secret to sign Access Tokens | *Generate a random 64-character hash* |
-| `JWT_REFRESH_SECRET` | Secret to sign Refresh Tokens | *Generate a distinct 64-character hash* |
-| `ACCESS_TOKEN_EXPIRY`| Access Token Lifetime | `15m` |
-| `REFRESH_TOKEN_EXPIRY`| Refresh Token Lifetime | `7d` |
-| `BCRYPT_ROUNDS` | Password hashing complexity | `12` |
-| `CORS_ORIGIN` | Allowed Frontend Origin | `https://your-storefront-domain.com` |
-| `SITE_URL` | Public API URL | `https://api.your-domain.com` |
-| `UPLOAD_DIR` | Image directory | `./uploads` |
+| `NEXT_PUBLIC_API_URL` | ✅ | Backend API base URL |
+| `NEXT_PUBLIC_SITE_URL` | ✅ | Public site URL (for SEO, emails) |
+| `NEXT_PUBLIC_STORE_NAME` | ✅ | Brand name (default: CodeDrip) |
+| `GOOGLE_SEARCH_CONSOLE_VERIFICATION` | ❌ | GSC meta tag content |
 
-> [!WARNING]  
-> Make sure `JWT_SECRET` and `JWT_REFRESH_SECRET` are completely different, long strings. If they match, the API will fail to start for security reasons.
+### Backend (Railway)
 
----
-
-## Step 3: Frontend Deployment (Next.js)
-
-Host the storefront frontend (`/apps/web`) on **Vercel** for optimal Next.js performance, SSR, caching, and globally distributed CDN edges.
-
-1. **Connect Repository:** Link your GitHub repo to Vercel.
-2. **Framework Preset:** Select **Next.js**.
-3. **Root Directory:** Set the Root Directory parameter to `apps/web`.
-4. **Environment Variables:** Define the following frontend variables:
-
-| Variable | Purpose | Value |
+| Variable | Required | Description |
 |---|---|---|
-| `NEXT_PUBLIC_API_URL` | URL of the deployed Express backend | `https://api.your-domain.com` |
-| `NEXT_PUBLIC_SITE_URL` | The domain your storefront is served on | `https://your-storefront-domain.com` |
-| `NEXT_PUBLIC_STORE_NAME`| Brand title for static pages & metadata | `CodeDrip` |
-
-5. **Deploy:** Click deploy. Vercel will bundle the workspace and deploy it globally.
-
----
-
-## Step 4: S3 Image Bucket Integration (Optional but highly recommended)
-
-By default, the server stores uploaded product images on the local disk inside `/uploads`. If you deploy to ephemeral cloud platforms (like Render or Railway), files will be wiped out during redeploys. To make uploads persistent:
-
-1. **Set Up an Object Storage Bucket:** Create a bucket using **AWS S3**, **Cloudflare R2**, or **DigitalOcean Spaces**.
-2. **Swap the Multer Engine:**
-   Modify [apps/api/src/middlewares/upload.ts](file:///d:/Main Projects/Ecom/apps/api/src/middlewares/upload.ts) to utilize `multer-s3` instead of `multer.diskStorage`:
-   ```typescript
-   import { S3Client } from '@aws-sdk/client-s3';
-   import multerS3 from 'multer-s3';
-
-   const s3 = new S3Client({ region: 'your-region' });
-
-   const storage = multerS3({
-     s3: s3,
-     bucket: 'your-bucket-name',
-     acl: 'public-read',
-     key: function (req, file, cb) {
-       cb(null, `products/${Date.now()}-${file.originalname}`);
-     }
-   });
-   ```
-3. **Set Database References:** When inserting images into the database, store the resulting public bucket URL (`https://your-bucket.s3.amazonaws.com/...`) in the `product_images.url` field.
+| `NODE_ENV` | ✅ | `production` |
+| `PORT` | ✅ | Server port (default: 4000) |
+| `DATABASE_URL` | ✅ | PostgreSQL connection string |
+| `JWT_SECRET` | ✅ | Access token signing secret (32+ chars) |
+| `JWT_REFRESH_SECRET` | ✅ | Refresh token signing secret (must differ from JWT_SECRET) |
+| `ACCESS_TOKEN_EXPIRY` | ❌ | Token lifetime (default: `15m`) |
+| `REFRESH_TOKEN_EXPIRY` | ❌ | Token lifetime (default: `7d`) |
+| `BCRYPT_ROUNDS` | ❌ | Hash rounds (default: 12) |
+| `CORS_ORIGIN` | ✅ | Frontend origin(s), comma-separated |
+| `SITE_URL` | ✅ | Public API URL |
+| `UPLOAD_DIR` | ❌ | Image storage path (default: `./uploads`) |
+| `LOG_LEVEL` | ❌ | `error` / `warn` / `info` / `debug` |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | ❌ | Email service (logs to console if blank) |
+| `REDIS_URL` | ❌ | Distributed rate limiting |
+| `SENTRY_DSN` | ❌ | Error tracking |
 
 ---
 
-## Production Security & Best Practices
+## Troubleshooting
 
-1. **Admin Authorization Gate:**
-   - The first user who registers on a clean database is promoted automatically to `admin` via the trigger `first_user_becomes_admin`.
-   - Ensure you register immediately upon deployment to secure the admin credential, or pre-create your admin securely through SQL seeds.
-2. **Enable SSL/HTTPS:** Ensure both your API backend and your frontend use SSL (HTTPS). Secure HTTP-only auth cookies will only travel correctly over secure origins.
-3. **Review CORs Settings:** Never leave `CORS_ORIGIN` blank or set to `*`. Ensure it explicitly matches the URL of your Vercel deployment storefront.
+| Problem | Solution |
+|---|---|
+| API returns CORS errors | Ensure `CORS_ORIGIN` matches your Vercel URL exactly (no trailing slash) |
+| Images disappear on redeploy | Set up S3/R2 for persistent storage (see below) |
+| "JWT_SECRET must be at least 32 chars" | Generate a longer secret with `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"` |
+| Database connection refused | Verify `DATABASE_URL` is set and the database is accessible from Railway's network |
+| First user is not admin | The `first_user_becomes_admin` trigger only fires on a clean database |
+
+---
+
+## Optional: S3 Image Storage
+
+Railway ephemeral disks lose uploads on redeploy. To persist images:
+
+1. Create an **AWS S3** or **Cloudflare R2** bucket.
+2. Update `apps/api/src/middlewares/upload.ts` to use `multer-s3`.
+3. Store the public bucket URL in the `product_images.url` database field.
+
+---
+
+## Optional: Custom Domain
+
+### Vercel (Frontend)
+1. Go to **Settings → Domains** in your Vercel project.
+2. Add your domain (e.g., `codedrip.dev`).
+3. Update DNS records as instructed by Vercel.
+4. Update `NEXT_PUBLIC_SITE_URL` to `https://codedrip.dev`.
+5. Update `CORS_ORIGIN` in Railway to include the new domain.
+
+### Railway (API)
+1. Go to **Settings → Networking → Public Networking**.
+2. Add a custom domain (e.g., `api.codedrip.dev`).
+3. Update `NEXT_PUBLIC_API_URL` in Vercel to `https://api.codedrip.dev`.
+4. Update `SITE_URL` in Railway to `https://api.codedrip.dev`.
+
+---
+
+## Deployment Checklist
+
+- [ ] PostgreSQL provisioned and accessible
+- [ ] Database migrations applied (`npm run db:migrate`)
+- [ ] API deployed to Railway with all env vars
+- [ ] API health check passes (`/api/health`)
+- [ ] Frontend deployed to Vercel with env vars
+- [ ] CORS_ORIGIN matches Vercel URL
+- [ ] First user registered (becomes admin)
+- [ ] Product images upload successfully
+- [ ] Custom domain configured (optional)
+- [ ] SSL/HTTPS enabled on both services
