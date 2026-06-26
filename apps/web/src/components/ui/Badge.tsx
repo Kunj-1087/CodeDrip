@@ -1,21 +1,44 @@
 import type { ReactNode } from 'react';
+import { cn } from '@/lib/cn';
 
-type Tone = 'neutral' | 'success' | 'warning' | 'danger' | 'info' | 'indigo';
+type Tone = 'neutral' | 'success' | 'warning' | 'danger' | 'info' | 'brand' | 'indigo';
+type Size = 'sm' | 'md';
 
-// Status pills use a subtle tint background + high-contrast text (Precision Core).
-// In Stock=green, Low=amber, Out/error=red, processing=blue, shipped=indigo.
+// Status pills: a subtle tint of the tone's own color + high-contrast text. Tints
+// are token-based alphas so they adapt to light/dark automatically. Uppercase +
+// wide tracking reads as a precise system label, not body copy.
 const TONES: Record<Tone, string> = {
-  neutral: 'bg-surface-2 text-muted',
-  success: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300',
-  warning: 'bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300',
-  danger: 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300',
-  info: 'bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300',
-  indigo: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300',
+  neutral: 'bg-surface-3 text-muted',
+  success: 'bg-success/[0.12] text-success',
+  warning: 'bg-warning/[0.14] text-warning',
+  danger: 'bg-danger/[0.12] text-danger',
+  info: 'bg-info/10 text-info',
+  brand: 'bg-primary-light text-primary',
+  indigo: 'bg-info/10 text-info',
 };
 
-export function Badge({ children, tone = 'neutral' }: { children: ReactNode; tone?: Tone }) {
+const SIZES: Record<Size, string> = {
+  sm: 'px-2 py-0.5 text-[10px]',
+  md: 'px-2.5 py-0.5 text-xs',
+};
+
+export function Badge({
+  children,
+  tone = 'neutral',
+  size = 'md',
+}: {
+  children: ReactNode;
+  tone?: Tone;
+  size?: Size;
+}) {
   return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${TONES[tone]}`}>
+    <span
+      className={cn(
+        'inline-flex items-center rounded-full font-semibold uppercase tracking-wider',
+        TONES[tone],
+        SIZES[size],
+      )}
+    >
       {children}
     </span>
   );

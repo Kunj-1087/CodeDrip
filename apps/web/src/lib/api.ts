@@ -1,5 +1,5 @@
 // =============================================================================
-// Typed fetch wrapper for the OursCart API.
+// Typed fetch wrapper for the CodeDrip API.
 //   * credentials:'include' so the HTTP-only auth cookies travel with requests.
 //   * Guest cart identity is sent via the X-Session-Id header (see CartContext).
 //   * On a 401, it transparently attempts ONE token refresh, then retries.

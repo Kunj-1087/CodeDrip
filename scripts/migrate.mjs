@@ -1,5 +1,5 @@
 // =============================================================================
-// OursCart — migration runner
+// CodeDrip — migration runner
 // Applies db/001_schema.sql, db/002_functions.sql, db/003_seed.sql in order.
 //
 //   node scripts/migrate.mjs              # apply schema + functions (no seed)
@@ -40,7 +40,9 @@ if (!databaseUrl) {
 }
 
 const files = ['db/001_schema.sql', 'db/002_functions.sql'];
-if (args.has('--seed')) files.push('db/003_seed.sql');
+if (args.has('--seed')) {
+  files.push('db/005_tech_shirts.sql');
+}
 
 const client = new Client({ connectionString: databaseUrl });
 

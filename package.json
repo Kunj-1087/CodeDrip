@@ -1,5 +1,6 @@
 {
-  "name": "ourscart",
+  "name": "codedrip",
+  "description": "CodeDrip — developer-focused merch store. Full-stack ecommerce with Next.js 14, Express, and PostgreSQL.",
   "version": "0.1.0",
   "private": true,
   "workspaces": [
@@ -7,7 +8,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:web": "npm --workspace=apps/web run dev",
+    "dev:web": "npm --workspace=apps/web run dev -- -p 3005",
     "dev:api": "npm --workspace=apps/api run dev",
     "build": "npm --workspace=apps/web run build && npm --workspace=apps/api run build",
     "start:api": "npm --workspace=apps/api run start",

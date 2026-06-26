@@ -1,8 +1,6 @@
-# OursCart
+# CodeDrip
 
-A complete, production-shaped ecommerce platform for **consumer electronics parts** — RAM, SSDs, hard drives, and accessories. Clone it, set environment variables, run the migrations, and deploy. **Rebranding requires zero code changes** — only env vars and a single `store_settings` database row.
-
-> Default store: **OursCart** (electronics parts). Everything brandable is data-driven.
+Developer-focused merchandise store. Premium t-shirts, hoodies, and limited drops for coders, sysadmins, and tech enthusiasts who wear their stack with pride.
 
 ---
 
@@ -60,7 +58,7 @@ cp .env.example .env          # then edit secrets (see "Environment variables")
 #    apps/web reads NEXT_PUBLIC_* from .env.local (already provided for local dev)
 
 # 3. Create the database (if not using docker compose)
-createdb ourscart             # or: psql -c "CREATE DATABASE ourscart"
+createdb codedrip             # or: psql -c "CREATE DATABASE codedrip"
 
 # 4. Run migrations + seed demo data
 npm run db:reset              # DROP + recreate schema, functions, and seed
@@ -73,8 +71,8 @@ npm run dev:web               # http://localhost:3000
 Open http://localhost:3000.
 
 **Demo logins** (password for both: `Password123!`):
-- Admin — `admin@ourscart.com`
-- Customer — `customer@ourscart.com`
+- Admin — `admin@codedrip.dev`
+- Customer — `customer@codedrip.dev`
 
 ---
 
@@ -130,12 +128,12 @@ Migrations live in `db/` and run in numeric order:
 
 1. `db/001_schema.sql` — tables, indexes, sequences
 2. `db/002_functions.sql` — functions + triggers
-3. `db/003_seed.sql` — demo data (only via `--seed`)
+3. `db/005_tech_shirts.sql` — demo data (only via `--seed`)
 
 ```bash
 npm run db:migrate     # 001 + 002
-npm run db:seed        # 001 + 002 + 003
-npm run db:reset       # DROP schema, then 001 + 002 + 003
+npm run db:seed        # 001 + 002 + 005
+npm run db:reset       # DROP schema, then 001 + 002 + 005
 ```
 
 Full details in [docs/database-guide.md](docs/database-guide.md).
@@ -157,7 +155,7 @@ Dev stores product images on local disk via `multer` (`apps/api/src/middlewares/
 ```
 apps/web      Next.js storefront + admin (App Router, Tailwind, Context)
 apps/api      Express REST API (middleware, services, route modules)
-db            001_schema / 002_functions / 003_seed SQL
+db            001_schema / 002_functions / 005_tech_shirts SQL
 scripts       migrate.mjs (zero-dep migration runner)
 docs          setup-guide, api-reference, database-guide, SECURITY
 ```

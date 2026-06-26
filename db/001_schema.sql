@@ -1,5 +1,5 @@
 -- =============================================================================
--- OursCart — 001_schema.sql
+-- CodeDrip — 001_schema.sql
 -- Core relational schema for an electronics-parts ecommerce platform.
 -- Run order: 001_schema.sql -> 002_functions.sql -> 003_seed.sql
 --
@@ -19,7 +19,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;   -- gen_random_uuid(), crypt(), gen_sa
 CREATE EXTENSION IF NOT EXISTS citext;     -- case-insensitive email
 CREATE EXTENSION IF NOT EXISTS pg_trgm;    -- trigram index for fuzzy product search
 
--- Sequence backing human-readable order numbers (OC-YYYY-000123).
+-- Sequence backing human-readable order numbers (CD-YYYY-000123).
 CREATE SEQUENCE IF NOT EXISTS order_number_seq;
 
 -- -----------------------------------------------------------------------------
@@ -46,12 +46,14 @@ CREATE TABLE users (
 CREATE TABLE store_settings (
     singleton        BOOLEAN PRIMARY KEY DEFAULT true CHECK (singleton),
     id               UUID NOT NULL DEFAULT gen_random_uuid(),
-    store_name       TEXT NOT NULL DEFAULT 'OursCart',
+    store_name       TEXT NOT NULL DEFAULT 'CodeDrip',
     logo_url         TEXT,
     favicon_url      TEXT,
-    primary_color    TEXT NOT NULL DEFAULT '#2563eb',
-    secondary_color  TEXT NOT NULL DEFAULT '#0f172a',
-    accent_color     TEXT NOT NULL DEFAULT '#f59e0b',
+    -- Brand defaults are the "Claude" warm palette: terra cotta primary, warm
+    -- near-black secondary (dark hero / high-commit buttons), amber accent.
+    primary_color    TEXT NOT NULL DEFAULT '#d97757',
+    secondary_color  TEXT NOT NULL DEFAULT '#1a1917',
+    accent_color     TEXT NOT NULL DEFAULT '#f4a942',
     currency         TEXT NOT NULL DEFAULT 'INR',
     support_email    TEXT,
     support_phone    TEXT,
@@ -117,7 +119,7 @@ CREATE TABLE product_images (
 CREATE TABLE product_variants (
     id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     product_id     UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-    name           TEXT NOT NULL,           -- e.g. "16GB / DDR5"
+    name           TEXT NOT NULL,           -- e.g. "A4 / Daily Planner"
     sku_suffix     TEXT,
     price_modifier NUMERIC(12,2) NOT NULL DEFAULT 0,
     stock_quantity INT NOT NULL DEFAULT 0 CHECK (stock_quantity >= 0),

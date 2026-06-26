@@ -5,6 +5,10 @@
 // nothing but an order_id. The server re-reads the order's real total from the
 // DB, runs the mock gateway, and only then writes payment_status. There is no
 // code path by which a client can mark its own order paid or set the amount.
+//
+// Coupon usage tracking: used_count on the coupon row is incremented HERE
+// (on successful payment), NOT in createOrderFromCart, so a failed payment never
+// consumes a limited-use coupon.
 // =============================================================================
 import crypto from 'node:crypto';
 import { withTransaction } from '../config/database.ts';
@@ -33,8 +37,9 @@ export async function mockCheckout(userId: string, orderId: string): Promise<Moc
       total: string;
       currency: string;
       payment_status: string;
+      coupon_id: string | null;
     }>(
-      `SELECT o.id, o.order_number, o.total, o.payment_status, ss.currency
+      `SELECT o.id, o.order_number, o.total, o.payment_status, o.coupon_id, ss.currency
        FROM orders o, store_settings ss
        WHERE o.id = $1 AND o.user_id = $2 AND o.deleted_at IS NULL
        FOR UPDATE OF o`,
@@ -70,6 +75,12 @@ export async function mockCheckout(userId: string, orderId: string): Promise<Moc
       );
       // This UPDATE fires decrement_stock_on_paid() — stock is reduced atomically.
       await client.query("UPDATE orders SET payment_status = 'paid' WHERE id = $1", [order.id]);
+
+      // Increment coupon used_count only after payment succeeds — never on failure.
+      // This ensures that a limited-use coupon can be retried if the payment is declined.
+      if (order.coupon_id) {
+        await client.query('UPDATE coupons SET used_count = used_count + 1 WHERE id = $1', [order.coupon_id]);
+      }
 
       return {
         success: true,

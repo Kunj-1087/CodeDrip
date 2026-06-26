@@ -83,7 +83,7 @@ export default function AdminCoupons() {
                   <td className="px-4 py-3"><Badge tone={c.isActive ? 'success' : 'neutral'}>{c.isActive ? 'Active' : 'Off'}</Badge></td>
                   <td className="px-4 py-3 text-right">
                     <button onClick={() => toggle(c)} className="text-primary hover:underline">{c.isActive ? 'Disable' : 'Enable'}</button>
-                    <button onClick={() => remove(c.id)} className="ml-3 text-red-600 hover:underline">Delete</button>
+                    <button onClick={() => remove(c.id)} className="ml-3 text-danger hover:underline">Delete</button>
                   </td>
                 </tr>
               ))}

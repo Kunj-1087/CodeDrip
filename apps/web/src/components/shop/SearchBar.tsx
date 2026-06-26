@@ -18,7 +18,7 @@ export function SearchBar({ initial = '', onSearch }: { initial?: string; onSear
       type="search"
       value={term}
       onChange={(e) => setTerm(e.target.value)}
-      placeholder="Search by name, e.g. ‘DDR5’ or ‘NVMe 1TB’"
+      placeholder="Search by name, e.g. ‘Notion’ or ‘desk organizer’"
       aria-label="Search products"
       className="input"
     />

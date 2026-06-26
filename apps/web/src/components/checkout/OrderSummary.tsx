@@ -35,7 +35,7 @@ export function OrderSummary({
       {lines.map((l) => (
         <div key={l.label} className="flex justify-between">
           <span className="text-muted">{l.label}</span>
-          <span className={l.negative ? 'font-medium text-green-600' : 'text-ink'}>
+          <span className={l.negative ? 'font-medium text-success' : 'text-ink'}>
             {l.negative ? '−' : ''}
             {formatCurrency(l.value, currency)}
           </span>

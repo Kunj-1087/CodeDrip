@@ -52,7 +52,7 @@ The runner reads `DATABASE_URL` from the environment or `.env`. It uses only the
 | Object | Type | Behavior |
 |---|---|---|
 | `update_updated_at()` | trigger fn | `BEFORE UPDATE` stamps `updated_at` (on users, store_settings, categories, products, cart_items, orders) |
-| `generate_order_number()` | function | Returns `OC-YYYY-000123` from `order_number_seq` (collision-free) |
+| `generate_order_number()` | function | Returns `CD-YYYY-000123` from `order_number_seq` (collision-free) |
 | `recalculate_product_rating()` | trigger | After review insert/update/delete, recomputes `products.avg_rating` + `review_count` (approved only) |
 | `decrement_stock_on_paid()` | trigger | When `orders.payment_status` flips to `paid`, decrements `products.stock_quantity` by the order’s quantities |
 | `validate_coupon(code, subtotal)` | function | Returns the discount or `RAISE`s a clear error — the single source of truth for coupon math |
@@ -60,11 +60,11 @@ The runner reads `DATABASE_URL` from the environment or `.env`. It uses only the
 
 ## Seed data (`003_seed.sql`)
 
-- 1 `store_settings` row (OursCart defaults; INR; blue/slate/amber palette)
+- 1 `store_settings` row (CodeDrip defaults; INR; blue/slate/amber palette)
 - 4 categories: RAM, SSD, HDD, Accessories
 - 12 products (3 per category) with realistic `specs` JSONB and one placeholder image each
 - 2 coupons: `WELCOME10` (10% off) and `FLAT200` (₹200 off ≥ ₹1000)
-- 2 users (`admin@ourscart.com`, `customer@ourscart.com`), password `Password123!`, hashed with pgcrypto bcrypt (`crypt(..., gen_salt('bf', 12))`) — verified by Node `bcrypt.compare`
+- 2 users (`admin@codedrip.dev`, `customer@codedrip.dev`), password `Password123!`, hashed with pgcrypto bcrypt (`crypt(..., gen_salt('bf', 12))`) — verified by Node `bcrypt.compare`
 
 ## Reset & reseed
 

@@ -1,6 +1,6 @@
 # Security model
 
-How OursCart authenticates users, manages tokens, and where the trust boundary sits. This is a reference implementation — complete the **production checklist** at the end before deploying.
+How CodeDrip authenticates users, manages tokens, and where the trust boundary sits. This is a reference implementation — complete the **production checklist** at the end before deploying.
 
 ## Authentication flow
 

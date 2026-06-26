@@ -88,6 +88,9 @@ export async function createOrderFromCart(userId: string, input: CreateOrderInpu
     subtotal = round2(subtotal);
 
     // Coupon discount via the DB function (single source of truth for coupon math).
+    // NOTE: used_count is NOT incremented here — it's incremented AFTER payment
+    // succeeds in paymentService.mockCheckout. This prevents a failed payment from
+    // consuming a limited-use coupon (the coupon can be retried).
     let discountAmount = 0;
     let couponId: string | null = null;
     if (input.couponCode) {
@@ -96,8 +99,9 @@ export async function createOrderFromCart(userId: string, input: CreateOrderInpu
         subtotal,
       ]);
       discountAmount = round2(Number(disc[0].discount));
+      // Validate-only: fetch the coupon id without incrementing used_count.
       const { rows: c } = await client.query<{ id: string }>(
-        'UPDATE coupons SET used_count = used_count + 1 WHERE code = $1 RETURNING id',
+        'SELECT id FROM coupons WHERE code = $1',
         [input.couponCode],
       );
       couponId = c[0]?.id ?? null;
@@ -207,15 +211,16 @@ export async function getOrderDetail(orderId: string, userId?: string) {
   }
 
   const { rows } = await query(
-    `SELECT o.*,
+    `SELECT o.*, u.email AS customer_email,
             COALESCE(json_agg(json_build_object(
               'id', oi.id, 'productId', oi.product_id, 'snapshot', oi.product_snapshot,
               'quantity', oi.quantity, 'unitPrice', oi.unit_price, 'totalPrice', oi.total_price
             ) ORDER BY oi.id) FILTER (WHERE oi.id IS NOT NULL), '[]') AS items
      FROM orders o
+     JOIN users u ON u.id = o.user_id
      LEFT JOIN order_items oi ON oi.order_id = o.id
      WHERE o.id = $1 AND o.deleted_at IS NULL${ownership}
-     GROUP BY o.id`,
+     GROUP BY o.id, u.email`,
     params,
   );
   if (rows.length === 0) throw AppError.notFound('Order not found');

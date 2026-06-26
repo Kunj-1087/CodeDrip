@@ -49,6 +49,12 @@ export interface ProductVariant {
   attributes: Record<string, unknown>;
 }
 
+export interface ProductTag {
+  name: string;
+  slug: string;
+  color: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -70,6 +76,7 @@ export interface Product {
   imageUrl: string | null;
   images?: ProductImage[];
   variants?: ProductVariant[];
+  tags?: ProductTag[];
 }
 
 export interface CartLine {
@@ -108,10 +115,18 @@ export interface OrderListItem {
   itemCount: number;
 }
 
+export interface OrderItemSnapshot {
+  name: string;
+  sku: string | null;
+  slug: string;
+  variant: string | null;
+  unitPrice: number;
+}
+
 export interface OrderItem {
   id: string;
   productId: string | null;
-  snapshot: { name: string; sku: string | null; slug: string; variant: string | null; unitPrice: number };
+  snapshot: OrderItemSnapshot;
   quantity: number;
   unitPrice: string;
   totalPrice: string;
@@ -120,6 +135,7 @@ export interface OrderItem {
 export interface OrderDetail {
   id: string;
   order_number: string;
+  customer_email?: string;
   shipping_address: Record<string, string>;
   subtotal: string;
   discount_amount: string;

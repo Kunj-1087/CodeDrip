@@ -31,12 +31,14 @@ interface RecentOrder {
   createdAt: string;
 }
 
+// Chart slice colors are canvas-drawn (not CSS), so they're literal hex — kept in
+// step with the warm design tokens: amber/info-blue/violet/success/danger.
 const STATUS_COLORS: Record<string, string> = {
-  pending: '#f59e0b',
-  processing: '#3b82f6',
+  pending: '#f4a942',
+  processing: '#0066cc',
   shipped: '#6366f1',
-  delivered: '#22c55e',
-  cancelled: '#ef4444',
+  delivered: '#3d9970',
+  cancelled: '#e5534b',
 };
 
 export default function AdminDashboard() {
@@ -72,12 +74,12 @@ export default function AdminDashboard() {
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (
-          <div key={c.label} className="card p-5">
+          <div key={c.label} className="card p-5 transition-shadow duration-200 hover:shadow-sm">
             <p className="eyebrow">{c.label}</p>
             {c.value === null ? (
               <Skeleton className="mt-2 h-9 w-28" />
             ) : (
-              <p className={`mt-1.5 text-3xl font-bold tracking-tight ${c.alert ? 'text-red-600' : 'text-ink'}`}>
+              <p className={`mt-1.5 text-3xl font-bold tracking-tight tabular-nums ${c.alert ? 'text-danger' : 'text-ink'}`}>
                 {c.value}
               </p>
             )}

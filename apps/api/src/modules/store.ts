@@ -17,10 +17,10 @@ router.get(
     );
     const s = rows[0] ?? {};
     res.json({
-      storeName: s.store_name ?? 'OursCart',
+      storeName: s.store_name ?? 'CodeDrip',
       logoUrl: s.logo_url ?? null,
       faviconUrl: s.favicon_url ?? null,
-      primaryColor: s.primary_color ?? '#2563eb',
+      primaryColor: s.primary_color ?? '#4F46E5',
       secondaryColor: s.secondary_color ?? '#0f172a',
       accentColor: s.accent_color ?? '#f59e0b',
       currency: s.currency ?? 'INR',

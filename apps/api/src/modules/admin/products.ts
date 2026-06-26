@@ -101,17 +101,57 @@ router.get(
 router.get(
   '/:id',
   asyncHandler(async (req, res) => {
-    const { rows } = await query('SELECT * FROM products WHERE id = $1', [req.params.id]);
+    // Single query with LEFT JOINs to eliminate N+1 for product detail.
+    const { rows } = await query<Record<string, unknown>>(
+      `SELECT p.*,
+              COALESCE(
+                json_agg(DISTINCT jsonb_build_object(
+                  'id', pi.id, 'url', pi.url, 'altText', pi.alt_text,
+                  'sortOrder', pi.sort_order, 'isPrimary', pi.is_primary
+                ) ORDER BY pi.sort_order ASC)
+                FILTER (WHERE pi.id IS NOT NULL),
+                '[]'
+              ) AS images,
+              COALESCE(
+                json_agg(DISTINCT jsonb_build_object(
+                  'id', pv.id, 'name', pv.name, 'skuSuffix', pv.sku_suffix,
+                  'priceModifier', pv.price_modifier, 'stockQuantity', pv.stock_quantity,
+                  'attributes', pv.attributes
+                ) ORDER BY pv.name ASC)
+                FILTER (WHERE pv.id IS NOT NULL),
+                '[]'
+              ) AS variants
+       FROM products p
+       LEFT JOIN product_images pi ON pi.product_id = p.id
+       LEFT JOIN product_variants pv ON pv.product_id = p.id
+       WHERE p.id = $1
+       GROUP BY p.id`,
+      [req.params.id],
+    );
     if (rows.length === 0) throw AppError.notFound('Product not found');
-    const { rows: images } = await query(
-      'SELECT id, url, alt_text, sort_order, is_primary FROM product_images WHERE product_id = $1 ORDER BY sort_order ASC',
-      [req.params.id],
-    );
-    const { rows: variants } = await query(
-      'SELECT id, name, sku_suffix, price_modifier, stock_quantity, attributes FROM product_variants WHERE product_id = $1 ORDER BY name ASC',
-      [req.params.id],
-    );
-    res.json({ product: rows[0], images, variants });
+    const r = rows[0];
+
+    const parsedImages = Array.isArray(r.images)
+      ? (r.images as Array<Record<string, unknown>>).map((i) => ({
+          id: i.id,
+          url: i.url,
+          altText: i.altText,
+          sortOrder: i.sortOrder,
+          isPrimary: i.isPrimary,
+        }))
+      : [];
+    const parsedVariants = Array.isArray(r.variants)
+      ? (r.variants as Array<Record<string, unknown>>).map((v) => ({
+          id: v.id,
+          name: v.name,
+          skuSuffix: v.skuSuffix,
+          priceModifier: Number(v.priceModifier),
+          stockQuantity: Number(v.stockQuantity),
+          attributes: v.attributes ?? {},
+        }))
+      : [];
+
+    res.json({ product: r, images: parsedImages, variants: parsedVariants });
   }),
 );
 
@@ -119,6 +159,12 @@ router.post(
   '/',
   asyncHandler(async (req, res) => {
     const b = parseOrThrow(productSchema, req.body);
+
+    // Check slug uniqueness before inserting — two products with the same slug
+    // would cause routing conflicts on the storefront.
+    const { rows: slugCheck } = await query('SELECT 1 FROM products WHERE slug = $1 AND deleted_at IS NULL', [b.slug]);
+    if (slugCheck.length > 0) throw AppError.conflict(`The slug "${b.slug}" is already in use by another product`);
+
     const { rows } = await query(
       `INSERT INTO products (name, slug, description, short_description, sku, category_id, brand,
                              base_price, compare_at_price, stock_quantity, is_active, is_featured, specs)
@@ -134,6 +180,14 @@ router.patch(
   '/:id',
   asyncHandler(async (req, res) => {
     const b = parseOrThrow(productSchema, req.body);
+
+    // Slug uniqueness check also on update — another product may have taken the slug.
+    const { rows: slugCheck } = await query(
+      'SELECT 1 FROM products WHERE slug = $1 AND id != $2 AND deleted_at IS NULL',
+      [b.slug, req.params.id],
+    );
+    if (slugCheck.length > 0) throw AppError.conflict(`The slug "${b.slug}" is already in use by another product`);
+
     const { rowCount } = await query(
       `UPDATE products SET name=$1, slug=$2, description=$3, short_description=$4, sku=$5, category_id=$6,
                            brand=$7, base_price=$8, compare_at_price=$9, stock_quantity=$10,

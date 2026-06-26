@@ -41,20 +41,52 @@ export async function sendEmail(to: string, subject: string, html: string, text?
 
 export function orderConfirmationEmail(orderNumber: string, total: string, currency: string) {
   return {
-    subject: `Your OursCart order ${orderNumber} is confirmed`,
-    text: `Thanks for your order! ${orderNumber} is confirmed. Total charged: ${currency} ${total}. We'll email you when it ships.`,
-    html: `<h2>Order confirmed 🎉</h2>
-           <p>Thanks for your order. <strong>${orderNumber}</strong> is confirmed.</p>
+    subject: `Deployment Successful — ${orderNumber} | CodeDrip`,
+    text: `Your order ${orderNumber} has been deployed! Total charged: ${currency} ${total}. We'll email you tracking when it ships.`,
+    html: `<h2>Deployment Successful 🚀</h2>
+           <p>Your order <strong>${orderNumber}</strong> has been deployed to production.</p>
            <p>Total charged: <strong>${currency} ${total}</strong></p>
-           <p>We'll send tracking as soon as it ships.</p>`,
+           <p>We'll send tracking information as soon as your threads ship.</p>`,
+  };
+}
+
+export function adminNewOrderAlertEmail(
+  orderNumber: string,
+  customerEmail: string,
+  total: string,
+  currency: string,
+  siteUrl: string,
+) {
+  return {
+    subject: `[New Deployment] ${orderNumber} — ${currency} ${total}`,
+    text: `New deployment received:\n\nOrder: ${orderNumber}\nCustomer: ${customerEmail}\nTotal: ${currency} ${total}\n\nView in admin: ${siteUrl}/admin/orders`,
+    html: `<h2>New deployment 🚀</h2>
+           <p><strong>Order:</strong> ${orderNumber}</p>
+           <p><strong>Customer:</strong> ${customerEmail}</p>
+           <p><strong>Total:</strong> ${currency} ${total}</p>
+           <p><a href="${siteUrl}/admin/orders">View in admin dashboard</a></p>`,
+  };
+}
+
+export function shippingUpdateEmail(orderNumber: string, trackingLink?: string, siteUrl?: string) {
+  const trackingHtml = trackingLink
+    ? `<p><a href="${trackingLink}">Track your shipment</a></p>`
+    : '';
+  return {
+    subject: `Your CodeDrip order ${orderNumber} is en route`,
+    text: `Good news! Your CodeDrip order ${orderNumber} is on its way.${trackingLink ? `\nTrack: ${trackingLink}` : ''}`,
+    html: `<h2>Your threads are shipping! 📦</h2>
+           <p>Good news! <strong>${orderNumber}</strong> has shipped.</p>
+           ${trackingHtml}
+           <p><a href="${siteUrl || ''}/orders">View your orders</a></p>`,
   };
 }
 
 export function passwordResetEmail(resetUrl: string) {
   return {
-    subject: 'Reset your OursCart password',
-    text: `Reset your password using this link (valid for 30 minutes): ${resetUrl}`,
-    html: `<p>We received a request to reset your OursCart password.</p>
+    subject: 'Password reset request — CodeDrip',
+    text: `Reset your CodeDrip password using this link (valid for 30 minutes): ${resetUrl}`,
+    html: `<p>We received a request to reset your CodeDrip password.</p>
            <p><a href="${resetUrl}">Choose a new password</a> — this link is valid for 30 minutes.</p>
            <p>If you didn't request this, you can safely ignore this email.</p>`,
   };

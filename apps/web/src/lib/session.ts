@@ -1,7 +1,7 @@
 // Guest cart identity. A random session id is stored in localStorage and sent
 // as X-Session-Id so a not-yet-registered visitor can build a cart. On login the
 // id is handed to the API, which merges the guest cart into the user's cart.
-const KEY = 'ourscart_session_id';
+const KEY = 'codedrip_session_id';
 
 export function getGuestSessionId(): string {
   if (typeof window === 'undefined') return '';

@@ -1,5 +1,5 @@
 -- =============================================================================
--- OursCart — 002_functions.sql
+-- CodeDrip — 002_functions.sql
 -- Functions and triggers. Depends on tables from 001_schema.sql.
 -- =============================================================================
 
@@ -25,13 +25,13 @@ CREATE TRIGGER trg_cart_items_updated_at     BEFORE UPDATE ON cart_items     FOR
 CREATE TRIGGER trg_orders_updated_at         BEFORE UPDATE ON orders         FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- -----------------------------------------------------------------------------
--- generate_order_number — 'OC-2026-000042'. The numeric part comes from a
+-- generate_order_number — 'CD-2026-000042'. The numeric part comes from a
 -- sequence so concurrent checkouts never collide on the unique order_number.
 -- -----------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION generate_order_number()
 RETURNS TEXT AS $$
 BEGIN
-    RETURN 'OC-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('order_number_seq')::text, 6, '0');
+    RETURN 'CD-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('order_number_seq')::text, 6, '0');
 END;
 $$ LANGUAGE plpgsql;
 

@@ -1,17 +1,13 @@
 import type { Product } from '@/types';
 
 // Pick the most buyer-relevant spec VALUES for the compact mono pills shown on
-// product cards (e.g. "1TB", "NVMe PCIe 4.0", "7450MB/s"). Order matters: the
-// first present keys win, capped at `limit` so cards stay tidy.
+// product cards (e.g. "Notion Template", "Instant Download", "A5 Journal"). Order
+// matters: the first present keys win, capped at `limit` so cards stay tidy.
 const PRIORITY = [
-  'capacity',
-  'speed',
-  'interface',
-  'read_speed',
-  'form_factor',
-  'cas_latency',
-  'volume',
-  'length',
+  'product_type',
+  'use_case',
+  'material',
+  'color',
 ];
 
 export function topSpecs(product: Pick<Product, 'specs'>, limit = 3): string[] {

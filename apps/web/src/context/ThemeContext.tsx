@@ -8,27 +8,28 @@ interface ThemeValue {
 }
 
 const ThemeContext = createContext<ThemeValue | null>(null);
-const STORAGE_KEY = 'ourscart_theme';
+const STORAGE_KEY = 'codedrip-theme';
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>('dark');
 
-  // On mount, honor a saved choice, else the OS preference.
   useEffect(() => {
-    const saved = window.localStorage.getItem(STORAGE_KEY) as Theme | null;
-    const initial = saved ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    setTheme(initial);
+    const html = document.documentElement;
+    const saved = localStorage.getItem(STORAGE_KEY) as Theme | null;
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const resolved = saved ?? (prefersDark ? 'dark' : 'light');
+    setTheme(resolved);
+    html.classList.remove('dark', 'light');
+    html.classList.add(resolved);
   }, []);
-
-  // Reflect theme onto <html> for the Tailwind `dark:` variant + CSS vars.
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-  }, [theme]);
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => {
       const next = prev === 'dark' ? 'light' : 'dark';
-      window.localStorage.setItem(STORAGE_KEY, next);
+      const html = document.documentElement;
+      html.classList.remove('dark', 'light');
+      html.classList.add(next);
+      localStorage.setItem(STORAGE_KEY, next);
       return next;
     });
   }, []);

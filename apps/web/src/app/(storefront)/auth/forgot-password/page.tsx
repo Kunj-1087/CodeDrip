@@ -21,24 +21,26 @@ export default function ForgotPasswordPage() {
   return (
     <div className="container-px py-16">
       <div className="mx-auto max-w-md">
-        <h1 className="text-2xl font-bold text-ink">Reset your password</h1>
+        <h1 className="text-2xl font-bold text-ink font-mono">// reset_password_request</h1>
         {sent ? (
-          <div className="card mt-6 p-6">
-            <p className="text-ink">If <strong>{email}</strong> is registered, a reset link is on its way.</p>
-            <p className="mt-2 text-sm text-muted">
+          <div className="card mt-6 p-6 bg-surface-2 border-border rounded-2xl">
+            <p className="text-ink font-mono text-sm">If <strong>{email}</strong> is registered, a reset link is on its way.</p>
+            <p className="mt-2 text-xs text-muted font-mono leading-relaxed">
               The link is valid for 30 minutes. In local dev with no SMTP configured, the link is printed to the API
               console.
             </p>
-            <Link href="/auth/login" className="btn-secondary mt-4 inline-flex">Back to sign in</Link>
+            <Link href="/auth/login" className="btn border border-border bg-surface text-ink hover:bg-surface-3 inline-flex h-11 items-center justify-center font-mono text-xs rounded-xl px-5 mt-4 transition-all active:scale-[0.98]">
+              Back to sign in
+            </Link>
           </div>
         ) : (
-          <form onSubmit={submit} className="card mt-6 space-y-4 p-6">
-            <p className="text-sm text-muted">Enter your email and we’ll send a link to set a new password.</p>
+          <form onSubmit={submit} className="card mt-6 space-y-5 p-6 bg-surface-2 border-border rounded-2xl">
+            <p className="text-xs text-muted font-mono leading-relaxed">// Enter your email and we’ll send a link to set a new password.</p>
             <div>
-              <label className="label" htmlFor="email">Email</label>
-              <input id="email" type="email" required className="input" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <label className="text-[10px] font-mono text-muted uppercase tracking-wider block mb-1" htmlFor="email">Email</label>
+              <input id="email" type="email" autoComplete="email" required className="input h-[52px] font-mono" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
-            <button className="btn-primary w-full py-3" disabled={busy}>
+            <button className="btn bg-gradient-to-r from-primary to-accent hover:from-primary-hover hover:to-accent text-white w-full h-[60px] lg:h-12 flex items-center justify-center font-mono text-xs rounded-xl shadow-lg transition-all active:scale-[0.98] disabled:opacity-40" disabled={busy}>
               {busy ? 'Sending…' : 'Send reset link'}
             </button>
           </form>

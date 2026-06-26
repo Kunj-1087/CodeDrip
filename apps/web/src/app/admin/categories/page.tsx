@@ -77,7 +77,7 @@ export default function AdminCategories() {
                   <td className="px-4 py-3 text-muted">{c.sort_order}</td>
                   <td className="px-4 py-3 text-right">
                     <button onClick={() => edit(c)} className="text-primary hover:underline">Edit</button>
-                    <button onClick={() => remove(c.id)} className="ml-3 text-red-600 hover:underline">Delete</button>
+                    <button onClick={() => remove(c.id)} className="ml-3 text-danger hover:underline">Delete</button>
                   </td>
                 </tr>
               ))}

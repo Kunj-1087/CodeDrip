@@ -1,5 +1,5 @@
 {
-  "name": "ourscart-api",
+  "name": "codedrip-api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -7,12 +7,15 @@
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "npm run typecheck",
     "lint": "eslint . --ext .ts",
     "migrate": "node ../../scripts/migrate.mjs",
     "seed": "node ../../scripts/migrate.mjs --seed"
   },
   "dependencies": {
+    "@types/compression": "^1.8.1",
     "bcrypt": "^5.1.1",
+    "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -24,6 +27,7 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.14",
     "pg": "^8.12.0",
+    "sharp": "^0.33.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {

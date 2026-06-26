@@ -1,0 +1,21 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#FAF7F2"/>
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="1200" y2="630">
+      <stop offset="0%" stop-color="#4F46E5" stop-opacity="0.08"/>
+      <stop offset="50%" stop-color="#7C3AED" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#gradient)"/>
+  <!-- Dots pattern -->
+  <g fill="#4F46E5" fill-opacity="0.05">
+    <circle cx="120" cy="120" r="3"/><circle cx="280" cy="180" r="2"/><circle cx="450" cy="100" r="3"/>
+    <circle cx="650" cy="200" r="2"/><circle cx="820" cy="130" r="3"/><circle cx="1000" cy="170" r="2"/>
+    <circle cx="180" cy="350" r="2"/><circle cx="380" cy="420" r="3"/><circle cx="560" cy="380" r="2"/>
+    <circle cx="750" cy="450" r="3"/><circle cx="920" cy="350" r="2"/><circle cx="1080" cy="420" r="3"/>
+  </g>
+  <text x="600" y="280" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="800" fill="#1A1917" text-anchor="middle" letter-spacing="-1.5">FocusKit</text>
+  <text x="600" y="340" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="500" fill="#4F46E5" text-anchor="middle">Planners · Templates · Printables · Desk Accessories</text>
+  <text x="600" y="390" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="400" fill="#6B6862" text-anchor="middle">Student productivity tools for focused days.</text>
+</svg>

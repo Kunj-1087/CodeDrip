@@ -1,6 +1,6 @@
 # Setup guide — local development from scratch
 
-This walks you from a clean machine to a running OursCart storefront + admin.
+This walks you from a clean machine to a running CodeDrip storefront + admin.
 
 ## 1. Prerequisites
 
@@ -11,7 +11,7 @@ This walks you from a clean machine to a running OursCart storefront + admin.
 ## 2. Get the code & install
 
 ```bash
-git clone <your-repo> ourscart && cd ourscart
+git clone <your-repo> codedrip && cd codedrip
 npm install            # installs all workspaces (apps/web, apps/api)
 ```
 
@@ -20,8 +20,8 @@ npm install            # installs all workspaces (apps/web, apps/api)
 Using a local Postgres:
 
 ```bash
-createdb ourscart
-# or:  psql -U postgres -c "CREATE DATABASE ourscart"
+createdb codedrip
+# or:  psql -U postgres -c "CREATE DATABASE codedrip"
 ```
 
 Using Docker (provisions Postgres 17 on :5432 with user/pass `postgres`):
@@ -38,7 +38,7 @@ cp .env.example .env
 
 Edit `.env`:
 
-- Set `DATABASE_URL` to your database (default: `postgresql://postgres:postgres@localhost:5432/ourscart`).
+- Set `DATABASE_URL` to your database (default: `postgresql://postgres:postgres@localhost:5432/codedrip`).
 - Generate two **distinct** secrets:
 
 ```bash
@@ -62,14 +62,14 @@ You should see `Applying db/001_schema.sql ... done` for all three files. This c
 Two terminals:
 
 ```bash
-npm run dev:api       # → OursCart API listening on http://localhost:4000
+npm run dev:api       # → CodeDrip API listening on http://localhost:4000
 npm run dev:web       # → http://localhost:3000
 ```
 
 ## 7. Verify
 
 - Visit http://localhost:3000 — the homepage shows seeded featured products.
-- Sign in at `/auth/login` with `admin@ourscart.com` / `Password123!`.
+- Sign in at `/auth/login` with `admin@codedrip.com` / `Password123!`.
 - Visit `/admin` — the dashboard loads KPIs and charts.
 - Add a product to the cart as a guest, then sign in — the cart merges.
 - Check out and pay with the mock card form — the order appears under `/orders`.

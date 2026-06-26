@@ -38,11 +38,17 @@ export function toPublicUser(row: {
   return { id: row.id, email: row.email, firstName: row.first_name, lastName: row.last_name, role: row.role };
 }
 
-export function hashPassword(plain: string) {
+export async function hashPassword(plain: string): Promise<string> {
+  // Validate password strength BEFORE hashing — don't waste bcrypt time on
+  // weak passwords. The caller should also validate, but defense in depth.
+  if (plain.length < 8) throw new Error('Password must be at least 8 characters');
+  if (plain.length > 72) throw new Error('Password too long (bcrypt truncates at 72 chars)');
   return bcrypt.hash(plain, env.bcryptRounds);
 }
 
-export function verifyPassword(plain: string, hash: string) {
+export async function verifyPassword(plain: string, hash: string): Promise<boolean> {
+  // bcrypt.compare is inherently timing-safe — it hashes the candidate and
+  // compares the full hash string in constant time.
   return bcrypt.compare(plain, hash);
 }
 
@@ -53,9 +59,13 @@ interface TokenSubject {
 }
 
 export function signAccessToken(user: TokenSubject) {
+  // Access tokens carry the minimum payload: subject (user ID), email, and role.
+  // Never store sensitive data (password_hash, etc.) in a JWT.
   return jwt.sign({ email: user.email, role: user.role }, env.jwtSecret, {
     subject: user.id,
     expiresIn: env.accessTokenExpiry,
+    issuer: 'codedrip',
+    audience: 'codedrip-client',
   } as SignOptions);
 }
 
@@ -66,6 +76,8 @@ function signRefreshToken(user: TokenSubject) {
   const token = jwt.sign({ email: user.email, role: user.role, jti }, env.jwtRefreshSecret, {
     subject: user.id,
     expiresIn: env.refreshTokenExpiry,
+    issuer: 'codedrip',
+    audience: 'codedrip-refresh',
   } as SignOptions);
   return { token, jti };
 }

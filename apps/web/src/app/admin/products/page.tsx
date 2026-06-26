@@ -108,14 +108,14 @@ export default function AdminProducts() {
                   <td className="px-4 py-3 text-muted">{p.categoryName}</td>
                   <td className="px-4 py-3 text-ink">{formatCurrency(p.basePrice, currency)}</td>
                   <td className="px-4 py-3">
-                    <span className={p.stockQuantity <= 5 ? 'font-medium text-red-600' : 'text-ink'}>{p.stockQuantity}</span>
+                    <span className={p.stockQuantity <= 5 ? 'font-medium text-danger' : 'text-ink'}>{p.stockQuantity}</span>
                   </td>
                   <td className="px-4 py-3">
                     <Badge tone={p.isActive ? 'success' : 'neutral'}>{p.isActive ? 'Active' : 'Inactive'}</Badge>
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link href={`/admin/products/${p.id}`} className="text-primary hover:underline">Edit</Link>
-                    <button onClick={() => softDelete(p.id, p.name)} className="ml-3 text-red-600 hover:underline">Archive</button>
+                    <button onClick={() => softDelete(p.id, p.name)} className="ml-3 text-danger hover:underline">Archive</button>
                   </td>
                 </tr>
               ))

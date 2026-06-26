@@ -187,7 +187,7 @@ export default function ProductEditor() {
                 <div key={i} className="flex gap-2">
                   <input className="input" placeholder="capacity" value={row.key} onChange={(e) => setSpecs((s) => s.map((r, j) => (j === i ? { ...r, key: e.target.value } : r)))} />
                   <input className="input" placeholder="16GB" value={row.value} onChange={(e) => setSpecs((s) => s.map((r, j) => (j === i ? { ...r, value: e.target.value } : r)))} />
-                  <button onClick={() => setSpecs((s) => s.filter((_, j) => j !== i))} className="btn-ghost text-red-600">×</button>
+                  <button onClick={() => setSpecs((s) => s.filter((_, j) => j !== i))} className="btn-ghost text-danger">×</button>
                 </div>
               ))}
             </div>
@@ -295,13 +295,13 @@ function VariantsEditor({
           {variants.map((v) => (
             <li key={v.id} className="flex items-center justify-between py-2 text-sm">
               <span className="text-ink">{v.name} <span className="text-muted">(+₹{Number(v.price_modifier ?? 0)}, stock {v.stock_quantity ?? 0})</span></span>
-              <button onClick={() => remove(v.id)} className="text-red-600">Remove</button>
+              <button onClick={() => remove(v.id)} className="text-danger">Remove</button>
             </li>
           ))}
         </ul>
       )}
       <div className="grid grid-cols-[1fr_auto_auto_auto] items-end gap-2">
-        <input className="input" placeholder="16GB / DDR5" value={name} onChange={(e) => setName(e.target.value)} />
+        <input className="input" placeholder="e.g. A4 / Daily Planner" value={name} onChange={(e) => setName(e.target.value)} />
         <input className="input w-24" type="number" placeholder="+₹" value={mod} onChange={(e) => setMod(Number(e.target.value))} />
         <input className="input w-20" type="number" placeholder="stock" value={stock} onChange={(e) => setStock(Number(e.target.value))} />
         <button onClick={add} className="btn-secondary">Add</button>

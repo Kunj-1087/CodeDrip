@@ -40,7 +40,28 @@ const envSchema = z.object({
   SMTP_PORT: z.string().optional().default(''),
   SMTP_USER: z.string().optional().default(''),
   SMTP_PASS: z.string().optional().default(''),
-  EMAIL_FROM: z.string().default('noreply@ourscart.com'),
+  EMAIL_FROM: z.string().default('hello@codedrip.dev'),
+
+  // Connection pool sizing.
+  DB_POOL_MAX: z.coerce.number().default(20),
+  DB_POOL_MIN: z.coerce.number().default(2),
+
+  // Log verbosity used by the structured logger.
+  LOG_LEVEL: z.string().default('info'),
+
+  // Redis for distributed rate limiting (optional).
+  REDIS_URL: z.string().optional().default(''),
+
+  // Sentry DSN for error tracking (optional).
+  SENTRY_DSN: z.string().optional().default(''),
+
+  // Cron job authentication secret.
+  CRON_SECRET: z.string().optional().default(''),
+
+  SITE_URL: z.string().default('http://localhost:3000'),
+
+  // Email address for admin notifications (new orders, etc.)
+  NOTIFICATION_EMAIL: z.string().default(''),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -76,4 +97,12 @@ export const env = {
   maxFileSize: e.MAX_FILE_SIZE,
   smtp: { host: e.SMTP_HOST, port: e.SMTP_PORT, user: e.SMTP_USER, pass: e.SMTP_PASS },
   emailFrom: e.EMAIL_FROM,
+  dbPoolMax: e.DB_POOL_MAX,
+  dbPoolMin: e.DB_POOL_MIN,
+  logLevel: e.LOG_LEVEL,
+  redisUrl: e.REDIS_URL,
+  sentryDsn: e.SENTRY_DSN,
+  cronSecret: e.CRON_SECRET,
+  siteUrl: e.SITE_URL,
+  notificationEmail: e.NOTIFICATION_EMAIL || e.EMAIL_FROM,
 } as const;

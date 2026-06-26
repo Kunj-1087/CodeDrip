@@ -37,7 +37,9 @@ export function DoughnutChart({ data }: { data: Slice[] }) {
       ctx.beginPath();
       ctx.arc(cx, cy, radius, 0, Math.PI * 2);
       ctx.arc(cx, cy, inner, 0, Math.PI * 2, true);
-      ctx.fillStyle = 'rgba(148,163,184,0.25)';
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--color-border').trim()
+        ? `rgba(${getComputedStyle(document.documentElement).getPropertyValue('--color-border').trim()}, 0.4)`
+        : 'rgba(148,163,184,0.25)';
       ctx.fill('evenodd');
       return;
     }

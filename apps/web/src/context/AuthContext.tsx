@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useEffect, useReducer, useCallback, type ReactNode } from 'react';
 import { api } from '@/lib/api';
-import { getGuestSessionId } from '@/lib/session';
+import { getGuestSessionId, clearGuestSessionId } from '@/lib/session';
 import type { User } from '@/types';
 
 type AuthStatus = 'loading' | 'authenticated' | 'anonymous';
@@ -55,6 +55,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       { email, password, guestSessionId: getGuestSessionId() },
       { skipRefresh: true },
     );
+    // Guest cart is now merged on the server; clear the local session id so a
+    // subsequent logout → login cycle starts with a fresh (empty) guest context.
+    clearGuestSessionId();
     dispatch({ type: 'SET_USER', user: res.user });
     return res.user;
   }, []);
@@ -66,6 +69,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         { ...input, guestSessionId: getGuestSessionId() },
         { skipRefresh: true },
       );
+      // Same merge + clear as login. The new user now owns the cart items.
+      clearGuestSessionId();
       dispatch({ type: 'SET_USER', user: res.user });
       return res.user;
     },
