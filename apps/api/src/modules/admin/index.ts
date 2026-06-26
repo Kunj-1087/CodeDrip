@@ -10,6 +10,8 @@ import customers from './customers.ts';
 import coupons from './coupons.ts';
 import settings from './settings.ts';
 import analytics from './analytics.ts';
+import media from './media.ts';
+import seo from './seo.ts';
 
 const router = Router();
 
@@ -22,5 +24,7 @@ router.use('/customers', customers);
 router.use('/coupons', coupons);
 router.use('/settings', settings);
 router.use('/analytics', analytics);
+router.use('/media', media);
+router.use('/seo', seo);
 
 export default router;

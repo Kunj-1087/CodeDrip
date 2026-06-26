@@ -22,6 +22,7 @@ const createSchema = z.object({
   }),
   couponCode: z.string().max(40).optional(),
   notes: z.string().max(500).optional(),
+  shippingMethod: z.string().max(60).optional(),
 });
 
 // Create an order from the signed-in user's cart. All money is computed
@@ -47,6 +48,19 @@ router.get(
   asyncHandler(async (req, res) => {
     const order = await getOrderDetail(req.params.id, req.user!.id);
     res.json({ order });
+  }),
+);
+
+router.get(
+  '/:id/timeline',
+  asyncHandler(async (req, res) => {
+    // Enforce ownership by trying to fetch order detail first
+    await getOrderDetail(req.params.id, req.user!.id);
+    const { rows } = await query(
+      'SELECT id, status, note, created_at AS "createdAt" FROM order_timeline WHERE order_id = $1 ORDER BY created_at ASC',
+      [req.params.id],
+    );
+    res.json({ timeline: rows });
   }),
 );
 

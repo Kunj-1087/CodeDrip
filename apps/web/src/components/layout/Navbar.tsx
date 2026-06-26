@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useStore } from '@/context/StoreContext';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
@@ -38,6 +39,27 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [phIdx, setPhIdx] = useState(0);
+  const [cartBouncing, setCartBouncing] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Cart icon spring bounce event listener
+  useEffect(() => {
+    const handleCartBounce = () => {
+      setCartBouncing(true);
+      setTimeout(() => setCartBouncing(false), 500);
+    };
+    window.addEventListener('cart-bounce', handleCartBounce);
+    return () => window.removeEventListener('cart-bounce', handleCartBounce);
+  }, []);
+
+  // Header compression scroll listener
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Cycling placeholder timer
   useEffect(() => {
@@ -85,7 +107,10 @@ export function Navbar() {
       </div>
 
       {/* Main Header Container */}
-      <div className="bg-[#0A0A0A]/90 backdrop-blur-md border-b border-white/[0.05] h-14 md:h-[58px] flex items-center justify-between px-4 md:px-8 gap-4 text-white">
+      <div className={cn(
+        "bg-[#0A0A0A]/90 backdrop-blur-md border-b border-white/[0.05] flex items-center justify-between px-4 md:px-8 gap-4 text-white transition-all duration-300 ease-in-out gpu-layer",
+        scrolled ? "h-12 md:h-12" : "h-14 md:h-[62px]"
+      )}>
         
         {/* Left: Brand */}
         <Link href="/" className="flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all" aria-label="CodeDrip Home">
@@ -99,9 +124,13 @@ export function Navbar() {
             id="search-input"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onFocus={(e) => {
+              e.target.blur();
+              window.dispatchEvent(new CustomEvent('open-search'));
+            }}
             placeholder={PLACEHOLDERS[phIdx]}
             aria-label="Search products"
-            className="w-full bg-[#16161A] text-white pl-8 pr-16 py-1.5 text-xs font-mono border border-white/10 rounded-lg focus:border-[#FF4D4D] focus:ring-1 focus:ring-[#FF4D4D]/40 focus:outline-none transition-all placeholder-zinc-500"
+            className="w-full bg-[#16161A] text-white pl-8 pr-16 py-1.5 text-xs font-mono border border-white/10 rounded-lg focus:border-[#FF4D4D] focus:ring-1 focus:ring-[#FF4D4D]/40 focus:outline-none transition-all placeholder-zinc-500 cursor-pointer"
           />
           <div className="absolute right-2 flex items-center pointer-events-none">
             <kbd className="text-[9px] font-mono bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded border border-zinc-700 select-none shadow-sm">
@@ -151,14 +180,20 @@ export function Navbar() {
           {/* Cart */}
           <Link 
             href="/cart" 
+            id="cart-icon-nav"
             className="text-zinc-400 hover:text-[#FF4D4D] p-1.5 focus:outline-none transition-colors relative" 
             aria-label={`Cart with ${itemCount} items`}
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 transition-colors">
-              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <path d="M16 10a4 4 0 0 1-8 0" />
-            </svg>
+            <motion.div
+              animate={cartBouncing ? { scale: [1, 1.3, 1] } : {}}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 transition-colors">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <path d="M16 10a4 4 0 0 1-8 0" />
+              </svg>
+            </motion.div>
             {itemCount > 0 && (
               <span 
                 key={itemCount}
@@ -265,111 +300,174 @@ export function Navbar() {
       <div className="bg-gradient-to-r from-transparent via-[#FF4D4D]/35 to-transparent h-[1px] w-full" />
 
       {/* Mobile Drawer Overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 top-[128px] bg-[#0A0A0A]/95 backdrop-blur-lg z-40 md:hidden flex flex-col font-mono text-zinc-300 p-6 gap-6 transition-all duration-300 animate-fade-in border-t border-white/[0.05]">
-          {/* Mobile Search */}
-          <form onSubmit={(e) => { e.preventDefault(); setMobileMenuOpen(false); onSearch(e); }} className="relative w-full flex items-center mb-2" role="search">
-            <span className="absolute left-3 text-[#FF4D4D] font-bold text-sm pointer-events-none">{`>`}</span>
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="search codedrip..."
-              className="w-full bg-[#16161A] text-white pl-8 pr-4 py-2.5 text-sm font-mono border border-white/10 rounded-lg focus:border-[#FF4D4D] focus:ring-1 focus:ring-[#FF4D4D]/40 focus:outline-none transition-all"
-            />
-          </form>
-
-          {/* Categories/Nav Links */}
-          <div className="flex flex-col gap-4 text-sm font-mono">
-            <p className="text-[10px] text-zinc-500 font-mono tracking-wider uppercase mb-1">// Categories</p>
-            {LINKS.map((l) => {
-              const active = isLinkActive(l);
-              return (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    "flex items-center gap-2 hover:text-[#FF4D4D] transition-colors py-1.5",
-                    active ? "text-[#FF4D4D] font-bold" : ""
-                  )}
-                >
-                  <span className="text-[#FF4D4D]/60">{`$`}</span>
-                  <span>{`cd ${l.label.toLowerCase()}`}</span>
-                </Link>
-              );
-            })}
-          </div>
-
-          <hr className="border-white/5 my-2" />
-
-          {/* User Links / Controls */}
-          <div className="flex flex-col gap-4 text-sm font-mono">
-            <p className="text-[10px] text-zinc-500 font-mono tracking-wider uppercase mb-1">// Settings & Session</p>
-            
-            {/* Wishlist Mobile */}
-            <Link
-              href="/wishlist"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2 hover:text-[#FF4D4D] transition-colors py-1"
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25 }}
+            className={cn(
+              "fixed inset-x-0 bottom-0 bg-[#0A0A0A]/98 backdrop-blur-xl z-40 md:hidden flex flex-col font-mono text-zinc-300 p-6 gap-6 border-t border-white/[0.05] overflow-y-auto transition-all duration-300",
+              scrolled ? "top-[84px]" : "top-[92px]"
+            )}
+          >
+            {/* Mobile Search */}
+            <motion.form 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 }}
+              onSubmit={(e) => { e.preventDefault(); setMobileMenuOpen(false); onSearch(e); }} 
+              className="relative w-full flex items-center mb-2" 
+              role="search"
             >
-              <span className="text-zinc-500 font-bold">{`♥`}</span>
-              <span>Wishlist</span>
-            </Link>
+              <span className="absolute left-3 text-[#FF4D4D] font-bold text-sm pointer-events-none">{`>`}</span>
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={(e) => {
+                  e.target.blur();
+                  setMobileMenuOpen(false);
+                  window.dispatchEvent(new CustomEvent('open-search'));
+                }}
+                placeholder="search codedrip..."
+                className="w-full bg-[#16161A] text-white pl-8 pr-4 py-2.5 text-sm font-mono border border-white/10 rounded-lg focus:border-[#FF4D4D] focus:ring-1 focus:ring-[#FF4D4D]/40 focus:outline-none transition-all cursor-pointer"
+              />
+            </motion.form>
 
-            {/* Toggle Theme Mobile */}
-            <button
-              onClick={() => {
-                toggleTheme();
-                setMobileMenuOpen(false);
+            {/* Categories/Nav Links */}
+            <motion.div 
+              variants={{
+                hidden: {},
+                show: { transition: { staggerChildren: 0.04 } }
               }}
-              className="flex items-center gap-2 text-left hover:text-[#FF4D4D] transition-colors py-1 w-full"
+              initial="hidden"
+              animate="show"
+              className="flex flex-col gap-4 text-sm font-mono"
             >
-              <span>{theme === 'dark' ? '☀️' : '🌙'}</span>
-              <span>{`Switch Theme (${theme === 'dark' ? 'light' : 'dark'})`}</span>
-            </button>
+              <p className="text-[10px] text-zinc-500 font-mono tracking-wider uppercase mb-1">// Categories</p>
+              {LINKS.map((l) => {
+                const active = isLinkActive(l);
+                return (
+                  <motion.div 
+                    key={l.href}
+                    variants={{
+                      hidden: { opacity: 0, x: -15 },
+                      show: { opacity: 1, x: 0 }
+                    }}
+                  >
+                    <Link
+                      href={l.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={cn(
+                        "flex items-center gap-2 hover:text-[#FF4D4D] transition-colors py-1.5",
+                        active ? "text-[#FF4D4D] font-bold" : ""
+                      )}
+                    >
+                      <span className="text-[#FF4D4D]/60">{`$`}</span>
+                      <span>{`cd ${l.label.toLowerCase()}`}</span>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
 
-            {/* Auth / Account Mobile */}
-            {status === 'authenticated' && user ? (
-              <>
+            <motion.hr 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="border-white/5 my-2" 
+            />
+
+            {/* User Links / Controls */}
+            <motion.div 
+              variants={{
+                hidden: {},
+                show: { transition: { staggerChildren: 0.04, delayChildren: 0.15 } }
+              }}
+              initial="hidden"
+              animate="show"
+              className="flex flex-col gap-4 text-sm font-mono"
+            >
+              <p className="text-[10px] text-zinc-500 font-mono tracking-wider uppercase mb-1">// Settings & Session</p>
+              
+              {/* Wishlist Mobile */}
+              <motion.div variants={{ hidden: { opacity: 0, x: -15 }, show: { opacity: 1, x: 0 } }}>
                 <Link
-                  href="/profile"
+                  href="/wishlist"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center gap-2 hover:text-[#FF4D4D] transition-colors py-1"
                 >
-                  <span className="text-[#FF4D4D]/60">~</span>
-                  <span>My Profile</span>
+                  <span className="text-zinc-500 font-bold">{`♥`}</span>
+                  <span>Wishlist</span>
                 </Link>
-                <Link
-                  href="/orders"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 hover:text-[#FF4D4D] transition-colors py-1"
-                >
-                  <span className="text-[#FF4D4D]/60">~</span>
-                  <span>My Orders</span>
-                </Link>
+              </motion.div>
+
+              {/* Toggle Theme Mobile */}
+              <motion.div variants={{ hidden: { opacity: 0, x: -15 }, show: { opacity: 1, x: 0 } }}>
                 <button
                   onClick={() => {
+                    toggleTheme();
                     setMobileMenuOpen(false);
-                    void logout();
                   }}
-                  className="flex items-center gap-2 text-left text-red-400 hover:text-red-300 transition-colors py-1 w-full"
+                  className="flex items-center gap-2 text-left hover:text-[#FF4D4D] transition-colors py-1 w-full"
                 >
-                  <span>{`!`}</span>
-                  <span>Sign Out</span>
+                  <span>{theme === 'dark' ? '☀️' : '🌙'}</span>
+                  <span>{`Switch Theme (${theme === 'dark' ? 'light' : 'dark'})`}</span>
                 </button>
-              </>
-            ) : (
-              <Link
-                href="/auth/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className="mt-2 bg-[#FF4D4D] text-white text-center py-2.5 font-mono text-xs font-bold tracking-wider uppercase rounded-md shadow-md hover:bg-[#E03E3E] transition-all duration-200"
-              >
-                AUTH.LOGIN()
-              </Link>
-            )}
-          </div>
-        </div>
-      )}
+              </motion.div>
+
+              {/* Auth / Account Mobile */}
+              {status === 'authenticated' && user ? (
+                <>
+                  <motion.div variants={{ hidden: { opacity: 0, x: -15 }, show: { opacity: 1, x: 0 } }}>
+                    <Link
+                      href="/profile"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2 hover:text-[#FF4D4D] transition-colors py-1"
+                    >
+                      <span className="text-[#FF4D4D]/60">~</span>
+                      <span>My Profile</span>
+                    </Link>
+                  </motion.div>
+                  <motion.div variants={{ hidden: { opacity: 0, x: -15 }, show: { opacity: 1, x: 0 } }}>
+                    <Link
+                      href="/orders"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2 hover:text-[#FF4D4D] transition-colors py-1"
+                    >
+                      <span className="text-[#FF4D4D]/60">~</span>
+                      <span>My Orders</span>
+                    </Link>
+                  </motion.div>
+                  <motion.div variants={{ hidden: { opacity: 0, x: -15 }, show: { opacity: 1, x: 0 } }}>
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        void logout();
+                      }}
+                      className="flex items-center gap-2 text-left text-red-400 hover:text-red-300 transition-colors py-1 w-full"
+                    >
+                      <span>{`!`}</span>
+                      <span>Sign Out</span>
+                    </button>
+                  </motion.div>
+                </>
+              ) : (
+                <motion.div variants={{ hidden: { opacity: 0, x: -15 }, show: { opacity: 1, x: 0 } }}>
+                  <Link
+                    href="/auth/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="mt-2 bg-[#FF4D4D] text-white text-center py-2.5 font-mono text-xs font-bold tracking-wider uppercase rounded-md shadow-md hover:bg-[#E03E3E] transition-all duration-200 block"
+                  >
+                    AUTH.LOGIN()
+                  </Link>
+                </motion.div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

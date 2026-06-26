@@ -12,7 +12,9 @@ router.get(
   asyncHandler(async (_req, res) => {
     const { rows } = await query(
       `SELECT store_name, logo_url, favicon_url, primary_color, secondary_color, accent_color,
-              currency, support_email, support_phone, address, meta_description, social_links
+              currency, support_email, support_phone, address, meta_description, social_links,
+              logo_inverted_url, tax_rate, tax_inclusive, announcement_active, announcement_text,
+              announcement_link, announcement_color
        FROM store_settings WHERE singleton = true`,
     );
     const s = rows[0] ?? {};
@@ -29,6 +31,13 @@ router.get(
       address: s.address ?? null,
       metaDescription: s.meta_description ?? null,
       socialLinks: s.social_links ?? {},
+      logoInvertedUrl: s.logo_inverted_url ?? null,
+      taxRate: Number(s.tax_rate ?? 0),
+      taxInclusive: Boolean(s.tax_inclusive ?? false),
+      announcementActive: Boolean(s.announcement_active ?? false),
+      announcementText: s.announcement_text ?? null,
+      announcementLink: s.announcement_link ?? null,
+      announcementColor: s.announcement_color ?? null,
     });
   }),
 );

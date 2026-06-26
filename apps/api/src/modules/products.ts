@@ -44,6 +44,11 @@ const VARIANTS_SUBQUERY = `COALESCE((
   FROM product_variants pv WHERE pv.product_id = p.id
 ), '[]') AS variants`;
 
+const IMAGES_SUBQUERY = `COALESCE((
+  SELECT json_agg(jsonb_build_object('id', pi.id, 'url', pi.url, 'altText', pi.alt_text, 'sortOrder', pi.sort_order, 'isPrimary', pi.is_primary) ORDER BY pi.is_primary DESC, pi.sort_order ASC)
+  FROM product_images pi WHERE pi.product_id = p.id
+), '[]') AS images`;
+
 function mapProduct(r: ProductRow) {
   return {
     id: r.id,
@@ -64,6 +69,13 @@ function mapProduct(r: ProductRow) {
     categoryName: r.category_name ?? null,
     categorySlug: r.category_slug ?? null,
     imageUrl: r.image_url ?? null,
+    images: Array.isArray((r as any).images) ? (r as any).images.map((i: any) => ({
+      id: i.id,
+      url: i.url,
+      altText: i.altText,
+      sortOrder: i.sortOrder,
+      isPrimary: i.isPrimary,
+    })) : [],
     tags: Array.isArray(r.tags) ? r.tags : [],
     variants: Array.isArray((r as any).variants) ? (r as any).variants.map((v: any) => ({
       id: v.id,
@@ -141,7 +153,7 @@ router.get(
 
     params.push(q.limit, offset);
     const { rows } = await query<ProductRow>(
-      `SELECT p.*, c.name AS category_name, c.slug AS category_slug, ${PRIMARY_IMAGE}, ${TAGS_SUBQUERY}, ${VARIANTS_SUBQUERY}
+      `SELECT p.*, c.name AS category_name, c.slug AS category_slug, ${PRIMARY_IMAGE}, ${TAGS_SUBQUERY}, ${VARIANTS_SUBQUERY}, ${IMAGES_SUBQUERY}
        FROM products p
        JOIN categories c ON c.id = p.category_id
        WHERE ${whereSql}
@@ -161,7 +173,7 @@ router.get(
   '/featured',
   asyncHandler(async (_req, res) => {
     const { rows } = await query<ProductRow>(
-      `SELECT p.*, c.name AS category_name, c.slug AS category_slug, ${PRIMARY_IMAGE}, ${TAGS_SUBQUERY}, ${VARIANTS_SUBQUERY}
+      `SELECT p.*, c.name AS category_name, c.slug AS category_slug, ${PRIMARY_IMAGE}, ${TAGS_SUBQUERY}, ${VARIANTS_SUBQUERY}, ${IMAGES_SUBQUERY}
        FROM products p JOIN categories c ON c.id = p.category_id
        WHERE p.is_active = true AND p.deleted_at IS NULL AND p.is_featured = true
        ORDER BY p.created_at DESC LIMIT 8`,
@@ -176,7 +188,7 @@ router.get(
   '/trending',
   asyncHandler(async (_req, res) => {
     const { rows } = await query<ProductRow>(
-      `SELECT p.*, c.name AS category_name, c.slug AS category_slug, ${PRIMARY_IMAGE}, ${TAGS_SUBQUERY}, ${VARIANTS_SUBQUERY}
+      `SELECT p.*, c.name AS category_name, c.slug AS category_slug, ${PRIMARY_IMAGE}, ${TAGS_SUBQUERY}, ${VARIANTS_SUBQUERY}, ${IMAGES_SUBQUERY}
        FROM products p JOIN categories c ON c.id = p.category_id
        WHERE p.is_active = true AND p.deleted_at IS NULL
        ORDER BY p.review_count DESC, p.avg_rating DESC, p.created_at DESC LIMIT 8`,

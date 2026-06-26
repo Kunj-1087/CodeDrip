@@ -2,6 +2,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { CookieConsent } from '@/components/ui/CookieConsent';
+import { PageAnimatePresence } from '@/components/layout/PageAnimatePresence';
 
 // Storefront chrome. Admin pages live outside this route group and render their
 // own shell, so the customer navbar/footer (and cookie banner) never appear in
@@ -14,7 +15,9 @@ export default function StorefrontLayout({ children }: { children: React.ReactNo
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="flex-1 page-content">{children}</main>
+      <main className="flex-1 page-content">
+        <PageAnimatePresence>{children}</PageAnimatePresence>
+      </main>
       <Footer />
       <BottomNav />
       <CookieConsent />

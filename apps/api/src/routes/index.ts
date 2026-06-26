@@ -12,6 +12,7 @@ import addresses from '../modules/addresses.ts';
 import profile from '../modules/profile.ts';
 import orders from '../modules/orders.ts';
 import payments from '../modules/payments.ts';
+import newsletter from '../modules/newsletter.ts';
 import admin from '../modules/admin/index.ts';
 
 const router = Router();
@@ -28,6 +29,7 @@ router.use('/addresses', addresses);
 router.use('/profile', profile);
 router.use('/orders', orders);
 router.use('/payments', payments);
+router.use('/newsletter', newsletter);
 router.use('/admin', admin);
 
 export default router;

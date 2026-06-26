@@ -52,6 +52,7 @@ export function StickyBottomBar({ product }: { product: Product }) {
             inStock={inStock}
             maxQuantity={stock}
             compact
+            imageUrl={product.imageUrl}
           />
         </div>
       </div>

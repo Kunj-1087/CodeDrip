@@ -27,15 +27,56 @@ export function ReviewList({ productId }: { productId: string }) {
 
   return (
     <section className="mt-12">
-      <h2 className="text-xl font-bold tracking-tight text-ink">
-        Reviews{reviews.length > 0 && <span className="ml-2 text-base font-medium text-muted">({reviews.length})</span>}
+      <h2 className="text-xl font-bold tracking-tight text-ink font-mono uppercase">
+        &lt;customer_feedback /&gt;{reviews.length > 0 && <span className="ml-2 text-xs font-normal text-muted">({reviews.length} logs)</span>}
       </h2>
 
-      <div className="mt-4">
+      {/* Star Breakdown Summary Chart */}
+      {reviews.length > 0 && (() => {
+        const total = reviews.length;
+        const counts = [0, 0, 0, 0, 0];
+        let sum = 0;
+        reviews.forEach((r) => {
+          const star = Math.min(5, Math.max(1, Math.round(r.rating)));
+          counts[star - 1]++;
+          sum += r.rating;
+        });
+        const avg = (sum / total).toFixed(1);
+        const starsArray = [5, 4, 3, 2, 1];
+
+        return (
+          <div className="grid gap-6 md:grid-cols-3 border border-white/5 bg-black/15 p-6 rounded-xl mt-4">
+            <div className="flex flex-col items-center justify-center text-center border-b border-white/5 md:border-b-0 md:border-r border-white/5 pb-4 md:pb-0 md:pr-6">
+              <span className="text-4xl font-bold font-mono text-white leading-none">{avg}</span>
+              <div className="mt-2.5">
+                <StarRating value={parseFloat(avg)} />
+              </div>
+              <span className="mt-2 text-xs font-mono text-faint">system.avg_rating()</span>
+            </div>
+            <div className="md:col-span-2 space-y-2">
+              {starsArray.map((s) => {
+                const count = counts[s - 1];
+                const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+                return (
+                  <div key={s} className="flex items-center gap-3 text-xs font-mono text-muted">
+                    <span className="w-12 text-right">{s} star</span>
+                    <div className="h-2 flex-1 rounded bg-black/40 overflow-hidden border border-white/5">
+                      <div className="h-full bg-gradient-to-r from-primary to-accent" style={{ width: `${pct}%` }} />
+                    </div>
+                    <span className="w-8 text-right tabular-nums">{pct}%</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
+
+      <div className="mt-6">
         {status === 'authenticated' ? (
           <ReviewForm productId={productId} onSubmitted={load} />
         ) : (
-          <p className="text-sm text-muted">Sign in to leave a review. Verified purchases get a badge.</p>
+          <p className="text-xs text-muted font-mono">// Sign in to commit a review. Verified purchases gain tag badges.</p>
         )}
       </div>
 

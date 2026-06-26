@@ -10,6 +10,7 @@ export function AddToCart({
   inStock,
   maxQuantity,
   compact,
+  imageUrl,
 }: {
   productId: string;
   variantId: string | null;
@@ -17,6 +18,7 @@ export function AddToCart({
   maxQuantity: number;
   /** Render a compact inline version (used in the sticky mobile bar vs full page). */
   compact?: boolean;
+  imageUrl: string;
 }) {
   const { addItem } = useCart();
   const { notify } = useToast();
@@ -27,8 +29,14 @@ export function AddToCart({
   // disabled to prevent the user from setting a quantity that can't be ordered.
   const capped = maxQuantity > 0 ? maxQuantity : 0;
 
-  const onAdd = async () => {
+  const onAdd = async (e: React.MouseEvent<HTMLButtonElement>) => {
     setBusy(true);
+    // Trigger floating flying arc ghost element
+    window.dispatchEvent(
+      new CustomEvent('add-to-cart-animate', {
+        detail: { startX: e.clientX, startY: e.clientY, imageUrl },
+      })
+    );
     try {
       await addItem(productId, qty, variantId);
       notify(`Added ${qty} to your cart`, 'success');

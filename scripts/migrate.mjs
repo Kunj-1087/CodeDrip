@@ -39,7 +39,7 @@ if (!databaseUrl) {
   process.exit(1);
 }
 
-const files = ['db/001_schema.sql', 'db/002_functions.sql'];
+const files = ['db/001_schema.sql', 'db/002_functions.sql', 'db/006_upgrade_schema.sql'];
 if (args.has('--seed')) {
   files.push('db/005_tech_shirts.sql');
 }

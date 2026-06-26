@@ -76,6 +76,13 @@ export async function mockCheckout(userId: string, orderId: string): Promise<Moc
       // This UPDATE fires decrement_stock_on_paid() — stock is reduced atomically.
       await client.query("UPDATE orders SET payment_status = 'paid' WHERE id = $1", [order.id]);
 
+      // Log successful payment to timeline
+      await client.query(
+        `INSERT INTO order_timeline (order_id, status, note, created_by)
+         VALUES ($1, 'paid', 'Payment of ' || $2 || ' successfully confirmed. Order is now processing.', $3)`,
+        [order.id, amount, userId],
+      );
+
       // Increment coupon used_count only after payment succeeds — never on failure.
       // This ensures that a limited-use coupon can be retried if the payment is declined.
       if (order.coupon_id) {
@@ -98,6 +105,13 @@ export async function mockCheckout(userId: string, orderId: string): Promise<Moc
       [order.id, amount, order.currency, transactionId, JSON.stringify({ mock: true, approved: false })],
     );
     await client.query("UPDATE orders SET payment_status = 'failed' WHERE id = $1", [order.id]);
+
+    // Log failed payment to timeline
+    await client.query(
+      `INSERT INTO order_timeline (order_id, status, note, created_by)
+       VALUES ($1, 'failed', 'Payment attempt of ' || $2 || ' declined by checkout gateway.', $3)`,
+      [order.id, amount, userId],
+    );
 
     return {
       success: false,

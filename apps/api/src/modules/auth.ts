@@ -77,7 +77,7 @@ router.post(
     const { rows } = await query<AuthUserRow>(
       `INSERT INTO users (email, password_hash, first_name, last_name)
        VALUES ($1, $2, $3, $4)
-       RETURNING id, email, password_hash, first_name, last_name, role`,
+       RETURNING id, email, password_hash, first_name, last_name, role, avatar_url`,
       [body.email, passwordHash, body.firstName, body.lastName],
     );
     const user = rows[0];
@@ -97,7 +97,7 @@ router.post(
     const body = parseOrThrow(loginSchema, req.body);
 
     const { rows } = await query<AuthUserRow>(
-      'SELECT id, email, password_hash, first_name, last_name, role FROM users WHERE email = $1',
+      'SELECT id, email, password_hash, first_name, last_name, role, avatar_url FROM users WHERE email = $1',
       [body.email],
     );
     const user = rows[0];
@@ -143,7 +143,7 @@ router.get(
   authenticate,
   asyncHandler(async (req, res) => {
     const { rows } = await query<AuthUserRow>(
-      'SELECT id, email, password_hash, first_name, last_name, role FROM users WHERE id = $1',
+      'SELECT id, email, password_hash, first_name, last_name, role, avatar_url FROM users WHERE id = $1',
       [req.user!.id],
     );
     if (rows.length === 0) throw AppError.notFound('User not found');

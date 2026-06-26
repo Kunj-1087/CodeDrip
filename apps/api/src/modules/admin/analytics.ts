@@ -17,24 +17,52 @@ router.get(
   asyncHandler(async (_req, res) => {
     const { rows } = await query<{
       revenue_mtd: string;
+      revenue_prev_mtd: string;
       orders_today: string;
+      orders_yesterday: string;
       total_customers: string;
+      customers_prev_mtd: string;
       low_stock: string;
     }>(
       `SELECT
         (SELECT COALESCE(SUM(total),0) FROM orders
           WHERE payment_status='paid' AND created_at >= date_trunc('month', now())) AS revenue_mtd,
+        (SELECT COALESCE(SUM(total),0) FROM orders
+          WHERE payment_status='paid' AND created_at >= date_trunc('month', now() - interval '1 month') 
+          AND created_at < now() - interval '1 month') AS revenue_prev_mtd,
         (SELECT count(*) FROM orders
           WHERE created_at >= date_trunc('day', now()) AND deleted_at IS NULL) AS orders_today,
+        (SELECT count(*) FROM orders
+          WHERE created_at >= date_trunc('day', now() - interval '1 day') 
+          AND created_at < date_trunc('day', now()) AND deleted_at IS NULL) AS orders_yesterday,
         (SELECT count(*) FROM users WHERE role='customer') AS total_customers,
+        (SELECT count(*) FROM users 
+          WHERE role='customer' AND created_at >= date_trunc('month', now() - interval '1 month') 
+          AND created_at < now() - interval '1 month') AS customers_prev_mtd,
         (SELECT count(*) FROM products
           WHERE stock_quantity <= 5 AND is_active=true AND deleted_at IS NULL) AS low_stock`,
     );
     const k = rows[0];
+
+    const revCurrent = Number(k.revenue_mtd);
+    const revPrev = Number(k.revenue_prev_mtd);
+    const ordCurrent = Number(k.orders_today);
+    const ordPrev = Number(k.orders_yesterday);
+    const custCurrent = Number(k.total_customers);
+    const custPrev = Number(k.customers_prev_mtd);
+
+    const calcPctChange = (curr: number, prev: number) => {
+      if (prev === 0) return curr > 0 ? 100 : 0;
+      return Math.round(((curr - prev) / prev) * 100);
+    };
+
     res.json({
-      revenueMtd: Number(k.revenue_mtd),
-      ordersToday: Number(k.orders_today),
-      totalCustomers: Number(k.total_customers),
+      revenueMtd: revCurrent,
+      revenueMtdChange: calcPctChange(revCurrent, revPrev),
+      ordersToday: ordCurrent,
+      ordersTodayChange: calcPctChange(ordCurrent, ordPrev),
+      totalCustomers: custCurrent,
+      totalCustomersChange: calcPctChange(custCurrent, custCurrent - custPrev), // compared to start of period
       lowStock: Number(k.low_stock),
     });
   }),

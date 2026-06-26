@@ -11,8 +11,11 @@ import { DoughnutChart, type Slice } from '@/components/admin/DoughnutChart';
 
 interface Kpis {
   revenueMtd: number;
+  revenueMtdChange: number;
   ordersToday: number;
+  ordersTodayChange: number;
   totalCustomers: number;
+  totalCustomersChange: number;
   lowStock: number;
 }
 interface TopProduct {
@@ -61,10 +64,10 @@ export default function AdminDashboard() {
       .catch(() => undefined);
   }, []);
 
-  const cards = [
-    { label: 'Revenue (this month)', value: kpis ? formatCurrency(kpis.revenueMtd, currency) : null },
-    { label: 'Orders today', value: kpis ? String(kpis.ordersToday) : null },
-    { label: 'Customers', value: kpis ? String(kpis.totalCustomers) : null },
+  const cards: Array<{ label: string; value: string | null; alert?: boolean; change?: number }> = [
+    { label: 'Revenue (this month)', value: kpis ? formatCurrency(kpis.revenueMtd, currency) : null, change: kpis?.revenueMtdChange },
+    { label: 'Orders today', value: kpis ? String(kpis.ordersToday) : null, change: kpis?.ordersTodayChange },
+    { label: 'Customers', value: kpis ? String(kpis.totalCustomers) : null, change: kpis?.totalCustomersChange },
     { label: 'Low-stock items', value: kpis ? String(kpis.lowStock) : null, alert: (kpis?.lowStock ?? 0) > 0 },
   ];
 
@@ -79,9 +82,25 @@ export default function AdminDashboard() {
             {c.value === null ? (
               <Skeleton className="mt-2 h-9 w-28" />
             ) : (
-              <p className={`mt-1.5 text-3xl font-bold tracking-tight tabular-nums ${c.alert ? 'text-danger' : 'text-ink'}`}>
-                {c.value}
-              </p>
+              <div className="mt-1.5 flex items-baseline gap-2">
+                <p className={`text-3xl font-bold tracking-tight tabular-nums ${c.alert ? 'text-danger' : 'text-ink'}`}>
+                  {c.value}
+                </p>
+                {c.change !== undefined && (
+                  <span
+                    className={`inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-semibold ${
+                      c.change > 0
+                        ? 'bg-success/[0.12] text-success'
+                        : c.change < 0
+                          ? 'bg-danger/[0.12] text-danger'
+                          : 'bg-surface-3 text-muted'
+                    }`}
+                  >
+                    {c.change > 0 ? '↑' : c.change < 0 ? '↓' : '–'}
+                    {Math.abs(c.change)}%
+                  </span>
+                )}
+              </div>
             )}
           </div>
         ))}

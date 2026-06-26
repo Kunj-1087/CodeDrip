@@ -126,6 +126,8 @@ const updateSchema = z.object({
   fulfillmentStatus: z.enum(['pending', 'processing', 'shipped', 'delivered', 'cancelled']).optional(),
   paymentStatus: z.enum(['pending', 'paid', 'failed', 'refunded']).optional(),
   notes: z.string().max(1000).optional(),
+  trackingNumber: z.string().max(120).optional(),
+  trackingCarrier: z.string().max(100).optional(),
 });
 
 router.patch(
@@ -146,6 +148,14 @@ router.patch(
       params.push(b.notes);
       sets.push(`notes = $${params.length}`);
     }
+    if (b.trackingNumber !== undefined) {
+      params.push(b.trackingNumber);
+      sets.push(`tracking_number = $${params.length}`);
+    }
+    if (b.trackingCarrier !== undefined) {
+      params.push(b.trackingCarrier);
+      sets.push(`tracking_carrier = $${params.length}`);
+    }
     if (sets.length === 0) throw AppError.badRequest('Nothing to update');
     params.push(req.params.id);
     const { rowCount } = await query(
@@ -153,7 +163,64 @@ router.patch(
       params,
     );
     if (rowCount === 0) throw AppError.notFound('Order not found');
+
+    // Create status logs on timeline
+    if (b.fulfillmentStatus) {
+      await query(
+        `INSERT INTO order_timeline (order_id, status, note, created_by)
+         VALUES ($1, $2, $3, $4)`,
+        [req.params.id, b.fulfillmentStatus, `Fulfillment status updated to: ${b.fulfillmentStatus.toUpperCase()}`, req.user!.id]
+      );
+    }
+    if (b.paymentStatus) {
+      await query(
+        `INSERT INTO order_timeline (order_id, status, note, created_by)
+         VALUES ($1, $2, $3, $4)`,
+        [req.params.id, b.paymentStatus, `Payment status updated to: ${b.paymentStatus.toUpperCase()}`, req.user!.id]
+      );
+    }
+    if (b.trackingNumber) {
+      await query(
+        `INSERT INTO order_timeline (order_id, status, note, created_by)
+         VALUES ($1, 'shipped', $2, $3)`,
+        [req.params.id, `Shipment tracking details added: ${b.trackingCarrier ?? 'Standard'} - ${b.trackingNumber}`, req.user!.id]
+      );
+    }
+
     res.json({ ok: true });
+  }),
+);
+
+router.get(
+  '/:id/timeline',
+  asyncHandler(async (req, res) => {
+    const { rows } = await query(
+      `SELECT t.id, t.status, t.note, t.created_at AS "createdAt", u.email AS "createdByEmail"
+       FROM order_timeline t
+       LEFT JOIN users u ON u.id = t.created_by
+       WHERE t.order_id = $1 ORDER BY t.created_at ASC`,
+      [req.params.id],
+    );
+    res.json({ timeline: rows });
+  }),
+);
+
+const timelineSchema = z.object({
+  status: z.string().min(1),
+  note: z.string().min(1),
+});
+
+router.post(
+  '/:id/timeline',
+  asyncHandler(async (req, res) => {
+    const b = parseOrThrow(timelineSchema, req.body);
+    const { rows } = await query(
+      `INSERT INTO order_timeline (order_id, status, note, created_by)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, status, note, created_at AS "createdAt"`,
+      [req.params.id, b.status, b.note, req.user!.id],
+    );
+    res.status(201).json({ timeline: rows[0] });
   }),
 );
 

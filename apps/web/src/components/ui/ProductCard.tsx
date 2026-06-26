@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import type { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useToast } from '@/context/ToastContext';
@@ -47,8 +48,13 @@ export function ProductCard({ product }: { product: Product }) {
     return () => { cancelled = true; };
   }, [status, product.id]);
 
-  const onAdd = async () => {
+  const onAdd = async (e: React.MouseEvent<HTMLButtonElement>) => {
     setAdding(true);
+    window.dispatchEvent(
+      new CustomEvent('add-to-cart-animate', {
+        detail: { startX: e.clientX, startY: e.clientY, imageUrl: product.imageUrl },
+      })
+    );
     try {
       await addItem(product.id, 1);
       notify(`Staged ${product.name} for deployment`, 'success');
@@ -107,7 +113,10 @@ export function ProductCard({ product }: { product: Product }) {
   const isNew = product.tags?.some((t) => t.slug === 'new' || t.name.toLowerCase() === 'new');
 
   return (
-    <div
+    <motion.div
+      initial="rest"
+      whileHover="hover"
+      animate="rest"
       className={cn(
         'card group flex flex-col overflow-hidden transition-all duration-300 border border-border bg-surface-2',
         'lg:hover:-translate-y-1.5 lg:hover:border-primary/40 lg:hover:shadow-[0_12px_24px_-10px_rgba(108,99,255,0.15)] active:scale-[0.98] rounded-lg md:rounded-2xl relative',
@@ -117,14 +126,43 @@ export function ProductCard({ product }: { product: Product }) {
     >
       <div className="relative overflow-hidden aspect-square">
         <Link href={`/shop/${product.slug}`} className="block h-full w-full bg-surface-2 relative">
-          <ProductImage
-            src={product.imageUrl}
-            alt={product.name}
-            className="h-full w-full object-cover transition-transform duration-500 lg:group-hover:scale-105"
-            sizes="(max-width: 480px) 50vw, (max-width: 768px) 33vw, 25vw"
-          />
+          <motion.div
+            variants={{
+              rest: { scale: 1 },
+              hover: { scale: 1.05 }
+            }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            className="h-full w-full"
+          >
+            <ProductImage
+              src={product.imageUrl}
+              alt={product.name}
+              className="h-full w-full object-cover"
+              sizes="(max-width: 480px) 50vw, (max-width: 768px) 33vw, 25vw"
+            />
+          </motion.div>
+
+          {/* Secondary image crossfade */}
+          {product.images && product.images.length > 1 && (
+            <motion.div
+              variants={{
+                rest: { opacity: 0 },
+                hover: { opacity: 1 }
+              }}
+              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+              className="absolute inset-0 z-10"
+            >
+              <ProductImage
+                src={product.images[1].url}
+                alt={product.name}
+                className="h-full w-full object-cover"
+                sizes="(max-width: 480px) 50vw, (max-width: 768px) 33vw, 25vw"
+              />
+            </motion.div>
+          )}
+
           {/* Subtle overlay shadow */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/40 to-transparent opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/40 to-transparent opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 z-10" />
         </Link>
 
         {/* NEW Badge */}
@@ -232,19 +270,40 @@ export function ProductCard({ product }: { product: Product }) {
           )}
         </div>
 
-        {/* CTA add to cart */}
+        {/* Mobile Static Button (Always Visible) */}
         <button
           onClick={onAdd}
           disabled={adding || !product.inStock}
           className={cn(
-            'btn bg-gradient-to-r from-primary to-accent text-white mt-4 w-full py-2.5 font-mono text-xs rounded-xl shadow-md transition-all duration-200',
-            'lg:hover:-translate-y-0.5 active:scale-95',
+            'btn bg-gradient-to-r from-primary to-accent text-white mt-4 w-full py-2.5 font-mono text-xs rounded-xl shadow-md transition-all duration-200 lg:hidden',
+            'active:scale-95',
             'disabled:from-border disabled:to-border disabled:opacity-40 disabled:cursor-not-allowed',
           )}
           aria-label={`Add ${product.name} to cart`}
         >
           {adding ? 'staging...' : product.inStock ? 'git add <shirt>' : '404: OOS'}
         </button>
+
+        {/* Desktop Quick Add Button (Slides up on Hover) */}
+        <div className="hidden lg:block overflow-hidden w-full relative mt-4 h-[38px]">
+          <motion.button
+            variants={{
+              rest: { y: 40, opacity: 0 },
+              hover: { y: 0, opacity: 1 }
+            }}
+            transition={{ duration: 0.3, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+            onClick={onAdd}
+            disabled={adding || !product.inStock}
+            className={cn(
+              'btn bg-gradient-to-r from-primary to-accent text-white absolute inset-0 w-full py-2.5 font-mono text-xs rounded-xl shadow-md transition-all duration-200',
+              'active:scale-95',
+              'disabled:from-border disabled:to-border disabled:opacity-40 disabled:cursor-not-allowed',
+            )}
+            aria-label={`Add ${product.name} to cart`}
+          >
+            {adding ? 'staging...' : product.inStock ? 'git add <shirt>' : '404: OOS'}
+          </motion.button>
+        </div>
       </div>
     </div>
   );

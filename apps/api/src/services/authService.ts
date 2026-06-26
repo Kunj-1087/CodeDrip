@@ -18,6 +18,7 @@ export interface AuthUserRow {
   first_name: string | null;
   last_name: string | null;
   role: 'customer' | 'admin';
+  avatar_url: string | null;
 }
 
 export interface PublicUser {
@@ -26,6 +27,7 @@ export interface PublicUser {
   firstName: string | null;
   lastName: string | null;
   role: 'customer' | 'admin';
+  avatarUrl: string | null;
 }
 
 export function toPublicUser(row: {
@@ -34,8 +36,9 @@ export function toPublicUser(row: {
   first_name: string | null;
   last_name: string | null;
   role: 'customer' | 'admin';
+  avatar_url?: string | null;
 }): PublicUser {
-  return { id: row.id, email: row.email, firstName: row.first_name, lastName: row.last_name, role: row.role };
+  return { id: row.id, email: row.email, firstName: row.first_name, lastName: row.last_name, role: row.role, avatarUrl: row.avatar_url ?? null };
 }
 
 export async function hashPassword(plain: string): Promise<string> {

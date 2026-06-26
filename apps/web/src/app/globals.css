@@ -2079,3 +2079,36 @@ html.light {
     transform      : none !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PRINT STYLES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media print {
+  body {
+    background: white !important;
+    color: #000 !important;
+  }
+
+  .no-print,
+  nav,
+  aside,
+  button,
+  .btn-primary,
+  .btn-secondary,
+  [class*="sticky"] {
+    display: none !important;
+  }
+
+  .card {
+    border: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+    background: white !important;
+    break-inside: avoid;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}

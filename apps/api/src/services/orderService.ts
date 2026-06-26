@@ -31,6 +31,7 @@ export interface CreateOrderInput {
   shippingAddress: ShippingAddress;
   couponCode?: string;
   notes?: string;
+  shippingMethod?: string;
 }
 
 export interface CreatedOrder {
@@ -108,29 +109,51 @@ export async function createOrderFromCart(userId: string, input: CreateOrderInpu
     }
 
     const taxable = Math.max(subtotal - discountAmount, 0);
-    const shippingFee = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING_FEE;
+    const selectedMethod = input.shippingMethod || 'Standard';
+    let shippingFee = 0;
+    if (selectedMethod === 'Express') {
+      shippingFee = 250;
+    } else if (selectedMethod === 'Next-Day') {
+      shippingFee = 500;
+    } else {
+      shippingFee = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING_FEE;
+    }
     const taxAmount = round2(taxable * TAX_RATE);
     const total = round2(taxable + shippingFee + taxAmount);
 
+    // Fetch user email for order record
+    const { rows: userRows } = await client.query<{ email: string }>('SELECT email FROM users WHERE id = $1', [userId]);
+    const email = userRows[0]?.email ?? null;
+
     // 4. Create the order + snapshotted line items.
     const { rows: orderRows } = await client.query<{ id: string; order_number: string; payment_status: string }>(
-      `INSERT INTO orders (order_number, user_id, shipping_address, subtotal, discount_amount,
-                           shipping_fee, tax_amount, total, coupon_id, notes)
-       VALUES (generate_order_number(), $1, $2, $3, $4, $5, $6, $7, $8, $9)
+      `INSERT INTO orders (order_number, user_id, email, shipping_address, subtotal, discount_amount,
+                           shipping_fee, shipping_cost, tax_amount, total, coupon_id, notes, shipping_method)
+       VALUES (generate_order_number(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        RETURNING id, order_number, payment_status`,
       [
         userId,
+        email,
         JSON.stringify(input.shippingAddress),
         subtotal,
         discountAmount,
         shippingFee,
+        shippingFee, // shipping_cost
         taxAmount,
         total,
         couponId,
         input.notes ?? null,
+        selectedMethod, // shipping_method
       ],
     );
     const order = orderRows[0];
+
+    // Log placement timeline event
+    await client.query(
+      `INSERT INTO order_timeline (order_id, status, note, created_by)
+       VALUES ($1, 'placed', 'Order staged and pending payment confirmation.', $2)`,
+      [order.id, userId],
+    );
 
     for (const line of lines) {
       const unitPrice = round2(Number(line.unit_price));

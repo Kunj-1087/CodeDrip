@@ -1,5 +1,6 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { api, API_URL } from '@/lib/api';
 import { useStore } from '@/context/StoreContext';
 import { useToast } from '@/context/ToastContext';
@@ -133,7 +134,11 @@ export default function AdminOrders() {
             ) : (
               rows.map((o) => (
                 <tr key={o.id} className="border-b border-border last:border-0">
-                  <td className="px-4 py-3 font-medium text-ink">{o.orderNumber}</td>
+                  <td className="px-4 py-3 font-medium text-ink">
+                    <Link href={`/admin/orders/${o.id}`} className="hover:text-primary transition-colors">
+                      {o.orderNumber}
+                    </Link>
+                  </td>
                   <td className="px-4 py-3 text-muted">{o.customerEmail}</td>
                   <td className="px-4 py-3 text-ink">{formatCurrency(o.total, currency)}</td>
                   <td className="px-4 py-3"><Badge tone={statusTone(o.paymentStatus)}>{titleizeStatus(o.paymentStatus)}</Badge></td>

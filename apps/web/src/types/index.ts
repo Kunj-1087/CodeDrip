@@ -21,6 +21,7 @@ export interface User {
   firstName: string | null;
   lastName: string | null;
   role: 'customer' | 'admin';
+  avatarUrl?: string | null;
 }
 
 export interface Category {

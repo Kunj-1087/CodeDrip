@@ -6,6 +6,7 @@ import { NewsletterForm } from '@/components/ui/NewsletterForm';
 import { HomeJsonLd } from '@/components/seo/JsonLd';
 import type { Product, Category, StoreSettings } from '@/types';
 import { HeroRightSide } from '@/components/product/HeroRightSide';
+import { ScrollReveal, ScrollRevealItem } from '@/components/ui/ScrollReveal';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
@@ -137,105 +138,118 @@ export default async function HomePage() {
 
       {/* Premium Bento Grid Categories Section */}
       <section className="container-px py-20">
-        <div className="max-w-2xl">
-          <p className="font-mono text-xs uppercase tracking-wider text-primary">// category.list()</p>
-          <h2 className="mt-2 text-3xl font-bold tracking-tight text-white font-sans sm:text-4xl">Shop by developer stack</h2>
-        </div>
+        <ScrollReveal>
+          <div className="max-w-2xl">
+            <p className="font-mono text-xs uppercase tracking-wider text-primary">// category.list()</p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-white font-sans sm:text-4xl">Shop by developer stack</h2>
+          </div>
+        </ScrollReveal>
         
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <ScrollReveal staggerChildren className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {categories.filter(c => CATEGORY_BLURBS[c.slug]).slice(0, 6).map((c, index) => {
             const label = index === 0 ? '01_featured' : `0${index + 1}_drop`;
             
             return (
-              <Link 
-                key={c.id} 
-                href={`/shop?category=${c.slug}`} 
-                className="group card glass-panel relative overflow-hidden p-8 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 flex flex-col justify-between min-h-[220px] lg:col-span-1"
-              >
-                {/* Background glow hover */}
-                <div className="pointer-events-none absolute -right-10 -bottom-10 h-32 w-32 rounded-full bg-primary/10 blur-2xl group-hover:bg-primary/20 transition-all duration-300" />
-                
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="rounded-xl bg-white/[0.04] p-3 text-white border border-white/5 group-hover:border-primary/30 transition-all">
-                      <CategoryIcon slug={c.slug} />
-                    </span>
-                    <span className="font-mono text-[10px] text-faint group-hover:text-primary transition-colors">
-                      {label}
-                    </span>
+              <ScrollRevealItem key={c.id}>
+                <Link 
+                  href={`/shop?category=${c.slug}`} 
+                  className="group card glass-panel relative overflow-hidden p-8 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 flex flex-col justify-between min-h-[220px] lg:col-span-1 h-full"
+                >
+                  {/* Background glow hover */}
+                  <div className="pointer-events-none absolute -right-10 -bottom-10 h-32 w-32 rounded-full bg-primary/10 blur-2xl group-hover:bg-primary/20 transition-all duration-300" />
+                  
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="rounded-xl bg-white/[0.04] p-3 text-white border border-white/5 group-hover:border-primary/30 transition-all">
+                        <CategoryIcon slug={c.slug} />
+                      </span>
+                      <span className="font-mono text-[10px] text-faint group-hover:text-primary transition-colors">
+                        {label}
+                      </span>
+                    </div>
+                    
+                    <h3 className="mt-6 text-xl font-bold text-white font-sans tracking-tight group-hover:text-gradient transition-colors">
+                      {c.name}
+                    </h3>
+                    <p className="mt-2 text-sm text-muted font-sans max-w-md">
+                      {CATEGORY_BLURBS[c.slug] ?? c.description}
+                    </p>
                   </div>
                   
-                  <h3 className="mt-6 text-xl font-bold text-white font-sans tracking-tight group-hover:text-gradient transition-colors">
-                    {c.name}
-                  </h3>
-                  <p className="mt-2 text-sm text-muted font-sans max-w-md">
-                    {CATEGORY_BLURBS[c.slug] ?? c.description}
-                  </p>
-                </div>
-                
-                <div className="mt-6 flex items-center justify-between">
-                  <span className="font-mono text-xs font-semibold text-primary group-hover:text-accent transition-colors">
-                    Explore namespace →
-                  </span>
-                  <span className="font-mono text-[10px] text-muted border border-border px-2 py-0.5 rounded">
-                    package: {c.slug}
-                  </span>
-                </div>
-              </Link>
+                  <div className="mt-6 flex items-center justify-between">
+                    <span className="font-mono text-xs font-semibold text-primary group-hover:text-accent transition-colors">
+                      Explore namespace →
+                    </span>
+                    <span className="font-mono text-[10px] text-muted border border-border px-2 py-0.5 rounded">
+                      package: {c.slug}
+                    </span>
+                  </div>
+                </Link>
+              </ScrollRevealItem>
             );
           })}
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Featured / Top Sellers Grid */}
       {featured?.products && featured.products.length > 0 && (
         <section className="container-px py-10">
-          <div className="flex items-end justify-between border-b border-white/5 pb-4">
-            <div>
-              <p className="font-mono text-xs uppercase tracking-wider text-primary">// fetchFeatured(limit: 4)</p>
-              <h2 className="mt-1 text-2xl font-bold text-white font-sans">Top Sellers</h2>
+          <ScrollReveal>
+            <div className="flex items-end justify-between border-b border-white/5 pb-4">
+              <div>
+                <p className="font-mono text-xs uppercase tracking-wider text-primary">// fetchFeatured(limit: 4)</p>
+                <h2 className="mt-1 text-2xl font-bold text-white font-sans">Top Sellers</h2>
+              </div>
+              <Link href="/shop?featured=true" className="font-mono text-xs font-semibold text-primary hover:text-accent transition-colors">
+                [view all] →
+              </Link>
             </div>
-            <Link href="/shop?featured=true" className="font-mono text-xs font-semibold text-primary hover:text-accent transition-colors">
-              [view all] →
-            </Link>
-          </div>
-          <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          </ScrollReveal>
+          <ScrollReveal staggerChildren className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
             {featured.products.slice(0, 4).map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <ScrollRevealItem key={p.id}>
+                <ProductCard product={p} />
+              </ScrollRevealItem>
             ))}
-          </div>
+          </ScrollReveal>
         </section>
       )}
 
       {/* Trending Grid */}
       {trending?.products && trending.products.length > 0 && (
         <section className="container-px py-10">
-          <div className="flex items-end justify-between border-b border-white/5 pb-4">
-            <div>
-              <p className="font-mono text-xs uppercase tracking-wider text-accent">// fetchTrending()</p>
-              <h2 className="mt-1 text-2xl font-bold text-white font-sans">Trending Drops</h2>
+          <ScrollReveal>
+            <div className="flex items-end justify-between border-b border-white/5 pb-4">
+              <div>
+                <p className="font-mono text-xs uppercase tracking-wider text-accent">// fetchTrending()</p>
+                <h2 className="mt-1 text-2xl font-bold text-white font-sans">Trending Drops</h2>
+              </div>
+              <Link href="/shop" className="font-mono text-xs font-semibold text-accent hover:text-primary transition-colors">
+                [view all] →
+              </Link>
             </div>
-            <Link href="/shop" className="font-mono text-xs font-semibold text-accent hover:text-primary transition-colors">
-              [view all] →
-            </Link>
-          </div>
-          <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          </ScrollReveal>
+          <ScrollReveal staggerChildren className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
             {trending.products.slice(0, 4).map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <ScrollRevealItem key={p.id}>
+                <ProductCard product={p} />
+              </ScrollRevealItem>
             ))}
-          </div>
+          </ScrollReveal>
         </section>
       )}
 
       {/* Deployment Pipeline (Trust Strip) */}
       <section className="container-px py-20">
-        <div className="text-center max-w-xl mx-auto">
-          <p className="font-mono text-xs uppercase tracking-wider text-primary">// system.workflow</p>
-          <h2 className="mt-2 text-3xl font-bold tracking-tight text-white font-sans">Deployment Pipeline</h2>
-          <p className="mt-2 text-sm text-muted">From staging layout commit straight to your physical closet.</p>
-        </div>
+        <ScrollReveal>
+          <div className="text-center max-w-xl mx-auto">
+            <p className="font-mono text-xs uppercase tracking-wider text-primary">// system.workflow</p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-white font-sans">Deployment Pipeline</h2>
+            <p className="mt-2 text-sm text-muted">From staging layout commit straight to your physical closet.</p>
+          </div>
+        </ScrollReveal>
         
-        <div className="mt-12 grid gap-6 sm:grid-cols-3 relative">
+        <ScrollReveal staggerChildren className="mt-12 grid gap-6 sm:grid-cols-3 relative">
           {/* Connecting line */}
           <div className="absolute top-12 left-1/6 right-1/6 h-[1px] bg-gradient-to-r from-primary/30 via-accent/30 to-primary/30 hidden sm:block z-0" />
           
@@ -244,93 +258,107 @@ export default async function HomePage() {
             ['git commit -m "buy"', 'Push to production checkout with details. We merge conflict-free, handle safe payments, and package with care.', '2'],
             ['git push origin main', 'Your shirt is printed, checked, and delivered. Track package route logs right from dashboard.', '3'],
           ].map(([title, desc, step]) => (
-            <div key={step} className="card glass-panel relative p-8 text-center flex flex-col items-center hover:border-primary/30 transition-all z-10">
-              <span className="grid h-12 w-12 place-items-center rounded-full bg-primary/10 border border-primary/30 text-sm font-bold text-primary font-mono animate-pulse-glow shadow-inner">
-                {step}
-              </span>
-              <h3 className="mt-6 text-lg font-bold text-white font-sans">{title}</h3>
-              <p className="mt-3 text-xs md:text-sm text-muted font-sans leading-relaxed">{desc}</p>
-            </div>
+            <ScrollRevealItem key={step} className="h-full">
+              <div className="card glass-panel relative p-8 text-center flex flex-col items-center hover:border-primary/30 transition-all z-10 h-full">
+                <span className="grid h-12 w-12 place-items-center rounded-full bg-primary/10 border border-primary/30 text-sm font-bold text-primary font-mono animate-pulse-glow shadow-inner">
+                  {step}
+                </span>
+                <h3 className="mt-6 text-lg font-bold text-white font-sans">{title}</h3>
+                <p className="mt-3 text-xs md:text-sm text-muted font-sans leading-relaxed">{desc}</p>
+              </div>
+            </ScrollRevealItem>
           ))}
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Premium Trust Cards */}
       <section className="container-px py-10">
-        <div className="grid gap-6 sm:grid-cols-3">
+        <ScrollReveal staggerChildren className="grid gap-6 sm:grid-cols-3">
           {[
             ['Free Shipping above ₹999', 'Flat shipping rate on smaller orders. No hidden fees. We believe in predictable, clear pricing logs.', '🚚'],
             ['100% Premium Cotton', 'Combed ring-spun cotton. Pre-shrunk. Because your code should shrink bugs, not your premium garments.', '🧶'],
             ['Designed by Coders', 'Every graphic is designed and tested by developers who actually write code. No fake code templates.', '💻'],
           ].map(([title, body, icon]) => (
-            <div key={title} className="card glass-panel p-6 border-white/5 hover:border-accent/30 transition-all">
-              <div className="text-2xl">{icon}</div>
-              <h3 className="mt-4 font-bold text-white font-sans">{title}</h3>
-              <p className="mt-2 text-xs md:text-sm text-muted font-sans leading-relaxed">{body}</p>
-            </div>
+            <ScrollRevealItem key={title} className="h-full">
+              <div className="card glass-panel p-6 border-white/5 hover:border-accent/30 transition-all h-full">
+                <div className="text-2xl">{icon}</div>
+                <h3 className="mt-4 font-bold text-white font-sans">{title}</h3>
+                <p className="mt-2 text-xs md:text-sm text-muted font-sans leading-relaxed">{body}</p>
+              </div>
+            </ScrollRevealItem>
           ))}
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Testimonials */}
       <section className="container-px py-16">
-        <div className="max-w-2xl border-l-2 border-primary pl-4">
-          <p className="font-mono text-xs uppercase tracking-wider text-primary">// social_proof.log</p>
-          <h2 className="text-3xl font-bold tracking-tight text-white font-sans">Reviews from the console</h2>
-        </div>
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
+        <ScrollReveal>
+          <div className="max-w-2xl border-l-2 border-primary pl-4">
+            <p className="font-mono text-xs uppercase tracking-wider text-primary">// social_proof.log</p>
+            <h2 className="text-3xl font-bold tracking-tight text-white font-sans">Reviews from the console</h2>
+          </div>
+        </ScrollReveal>
+        <ScrollReveal staggerChildren className="mt-10 grid gap-6 md:grid-cols-3">
           {TESTIMONIALS.map((t) => (
-            <figure key={t.name} className="card glass-panel p-8 border-white/5 hover:border-primary/20 transition-all flex flex-col justify-between">
-              <blockquote className="text-sm italic leading-relaxed text-muted font-sans">"{t.quote}"</blockquote>
-              <figcaption className="mt-6 flex items-center gap-3">
-                <span className="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-accent grid place-items-center text-xs font-mono font-bold text-white">
-                  {t.name.charAt(0)}
-                </span>
-                <div>
-                  <span className="block text-xs font-semibold text-white font-sans">{t.name}</span>
-                  <span className="block text-[10px] text-faint font-mono">{t.role}</span>
-                </div>
-              </figcaption>
-            </figure>
+            <ScrollRevealItem key={t.name} className="h-full">
+              <figure className="card glass-panel p-8 border-white/5 hover:border-primary/20 transition-all flex flex-col justify-between h-full">
+                <blockquote className="text-sm italic leading-relaxed text-muted font-sans">"{t.quote}"</blockquote>
+                <figcaption className="mt-6 flex items-center gap-3">
+                  <span className="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-accent grid place-items-center text-xs font-mono font-bold text-white">
+                    {t.name.charAt(0)}
+                  </span>
+                  <div>
+                    <span className="block text-xs font-semibold text-white font-sans">{t.name}</span>
+                    <span className="block text-[10px] text-faint font-mono">{t.role}</span>
+                  </div>
+                </figcaption>
+              </figure>
+            </ScrollRevealItem>
           ))}
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Newsletter capture */}
       <section className="container-px py-16">
-        <div className="mx-auto max-w-3xl rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/5 via-accent/5 to-transparent p-8 text-center md:p-12 glass-panel shadow-2xl relative overflow-hidden">
-          <div className="pointer-events-none absolute -right-24 -top-24 h-48 w-48 rounded-full bg-accent/5 blur-3xl" />
-          
-          <p className="font-mono text-xs uppercase tracking-wider text-accent">~/subscribe-changelog</p>
-          <h2 className="mt-2 text-2xl font-bold text-white font-sans sm:text-3xl">Subscribe to the changelog</h2>
-          <p className="mt-3 text-xs md:text-sm text-muted font-sans max-w-lg mx-auto">
-            Get notified about small-batch drop announcements, restocks, and exclusive API keys (discount codes) before anyone else.
-          </p>
-          <NewsletterForm />
-          <p className="mt-4 text-[10px] text-faint font-mono">No spam. We respect your inbox like we respect semicolons.</p>
-        </div>
+        <ScrollReveal>
+          <div className="mx-auto max-w-3xl rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/5 via-accent/5 to-transparent p-8 text-center md:p-12 glass-panel shadow-2xl relative overflow-hidden">
+            <div className="pointer-events-none absolute -right-24 -top-24 h-48 w-48 rounded-full bg-accent/5 blur-3xl" />
+            
+            <p className="font-mono text-xs uppercase tracking-wider text-accent">~/subscribe-changelog</p>
+            <h2 className="mt-2 text-2xl font-bold text-white font-sans sm:text-3xl">Subscribe to the changelog</h2>
+            <p className="mt-3 text-xs md:text-sm text-muted font-sans max-w-lg mx-auto">
+              Get notified about small-batch drop announcements, restocks, and exclusive API keys (discount codes) before anyone else.
+            </p>
+            <NewsletterForm />
+            <p className="mt-4 text-[10px] text-faint font-mono">No spam. We respect your inbox like we respect semicolons.</p>
+          </div>
+        </ScrollReveal>
       </section>
 
       {/* FAQ Section */}
       <section className="container-px py-16">
-        <div className="max-w-2xl mx-auto text-center">
-          <p className="font-mono text-xs uppercase tracking-wider text-primary">// man codedrip</p>
-          <h2 className="mt-1 text-2xl font-bold text-white font-sans sm:text-3xl">Frequently Asked Questions</h2>
-        </div>
+        <ScrollReveal>
+          <div className="max-w-2xl mx-auto text-center">
+            <p className="font-mono text-xs uppercase tracking-wider text-primary">// man codedrip</p>
+            <h2 className="mt-1 text-2xl font-bold text-white font-sans sm:text-3xl">Frequently Asked Questions</h2>
+          </div>
+        </ScrollReveal>
         
-        <div className="mx-auto mt-8 max-w-3xl divide-y divide-white/5 border-t border-b border-white/5">
+        <ScrollReveal staggerChildren className="mx-auto mt-8 max-w-3xl divide-y divide-white/5 border-t border-b border-white/5">
           {FAQS.map((f) => (
-            <details key={f.q} className="group py-5">
-              <summary className="cursor-pointer list-none font-medium text-white marker:content-none font-mono text-sm">
-                <span className="flex items-center justify-between gap-4">
-                  <span className="hover:text-primary transition-colors">$ man {f.q.slice(0, -1).toLowerCase()}</span>
-                  <span className="text-muted transition-transform group-open:rotate-45 font-mono text-lg">+</span>
-                </span>
-              </summary>
-              <p className="mt-3 text-xs md:text-sm leading-relaxed text-muted font-sans pl-2 border-l border-primary/20">{f.a}</p>
-            </details>
+            <ScrollRevealItem key={f.q}>
+              <details className="group py-5">
+                <summary className="cursor-pointer list-none font-medium text-white marker:content-none font-mono text-sm">
+                  <span className="flex items-center justify-between gap-4">
+                    <span className="hover:text-primary transition-colors">$ man {f.q.slice(0, -1).toLowerCase()}</span>
+                    <span className="text-muted transition-transform group-open:rotate-45 font-mono text-lg">+</span>
+                  </span>
+                </summary>
+                <p className="mt-3 text-xs md:text-sm leading-relaxed text-muted font-sans pl-2 border-l border-primary/20">{f.a}</p>
+              </details>
+            </ScrollRevealItem>
           ))}
-        </div>
+        </ScrollReveal>
       </section>
     </>
   );

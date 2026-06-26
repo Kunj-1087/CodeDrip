@@ -162,7 +162,7 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
       <div className="space-y-4 pt-2">
         <VariantSelector variants={variants} selectedId={variantId} onSelect={handleSelectVariant} />
         
-        <AddToCart productId={product.id} variantId={variantId} inStock={inStock} maxQuantity={stock} />
+        <AddToCart productId={product.id} variantId={variantId} inStock={inStock} maxQuantity={stock} imageUrl={product.imageUrl} />
       </div>
 
       {/* Tech tags */}

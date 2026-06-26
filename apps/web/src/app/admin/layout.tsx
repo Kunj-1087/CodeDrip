@@ -4,9 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 
-// Client-side admin gate (UX). The API independently enforces admin on every
-// /admin/* request (401/403), so this guard is defense-in-depth, not the only
-// line — a non-admin who bypasses it still gets empty/forbidden responses.
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { status, user } = useAuth();
   const router = useRouter();
@@ -23,7 +20,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex min-h-screen">
       <AdminSidebar />
-      <main className="flex-1 overflow-x-hidden bg-surface-2">{children}</main>
+      <main className="flex-1 overflow-x-hidden bg-surface-2 pt-14 md:pt-0">{children}</main>
     </div>
   );
 }

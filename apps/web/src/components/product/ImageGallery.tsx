@@ -1,5 +1,6 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { ProductImage } from '@/types';
 import { ProductImage as ProductImageComponent } from '@/components/ui/ProductImage';
 import { cn } from '@/lib/cn';
@@ -19,6 +20,17 @@ export function ImageGallery({ images, name }: { images: ProductImage[]; name: s
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
   const [lastTap, setLastTap] = useState(0);
+
+  // Hover zoom states (desktop)
+  const [zoomOrigin, setZoomOrigin] = useState('center');
+  const [zoomed, setZoomed] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setZoomOrigin(`${x}% ${y}%`);
+  };
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
@@ -215,13 +227,32 @@ export function ImageGallery({ images, name }: { images: ProductImage[]; name: s
       <div className="hidden md:block">
         <div 
           onClick={() => openLightbox(active)}
-          className="card aspect-square overflow-hidden bg-surface-2 rounded-2xl cursor-zoom-in"
+          onMouseMove={handleMouseMove}
+          onMouseEnter={() => setZoomed(true)}
+          onMouseLeave={() => { setZoomed(false); setZoomOrigin('center'); }}
+          className="card aspect-square overflow-hidden bg-surface-2 rounded-2xl cursor-zoom-in relative"
         >
-          <ProductImageComponent
-            src={list[active].url}
-            alt={list[active].altText || name}
-            className="h-full w-full object-cover hover:scale-102 transition-transform duration-500"
-          />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="h-full w-full"
+            >
+              <ProductImageComponent
+                src={list[active].url}
+                alt={list[active].altText || name}
+                style={{
+                  transformOrigin: zoomOrigin,
+                  transform: zoomed ? 'scale(2.2)' : 'scale(1)',
+                  transition: zoomed ? 'none' : 'transform 0.25s ease-out',
+                }}
+                className="h-full w-full object-cover"
+              />
+            </motion.div>
+          </AnimatePresence>
         </div>
         {list.length > 1 && (
           <div className="mt-3 flex gap-2 overflow-x-auto scrollbar-none">
@@ -244,49 +275,57 @@ export function ImageGallery({ images, name }: { images: ProductImage[]; name: s
       </div>
 
       {/* Lightbox Modal */}
-      {lightboxOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex flex-col justify-between select-none">
-          {/* Header */}
-          <div className="flex items-center justify-between w-full p-5 z-50">
-            <span className="text-xs font-mono text-muted">
-              {lightboxActiveIndex + 1} / {list.length}
-            </span>
-            <button
-              onClick={closeLightbox}
-              className="text-xs font-mono text-primary hover:text-accent border border-primary/20 px-2 py-1 rounded bg-black/40"
-            >
-              [close]
-            </button>
-          </div>
-
-          {/* Interactive Zoomable Image container */}
-          <div
-            className="flex-1 w-full flex items-center justify-center overflow-hidden"
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+      <AnimatePresence>
+        {lightboxOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex flex-col justify-between select-none"
           >
-            <div
-              style={{
-                transform: `translate(${translateX}px, ${translateY}px) scale(${scale})`,
-                transition: translateX !== 0 || translateY !== 0 ? 'none' : 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-              }}
-              className="w-full max-h-[75vh] flex justify-center items-center"
-            >
-              <img
-                src={list[lightboxActiveIndex].url}
-                alt={list[lightboxActiveIndex].altText || name}
-                className="max-w-full max-h-[75vh] object-contain pointer-events-none"
-              />
+            {/* Header */}
+            <div className="flex items-center justify-between w-full p-5 z-50">
+              <span className="text-xs font-mono text-muted">
+                {lightboxActiveIndex + 1} / {list.length}
+              </span>
+              <button
+                onClick={closeLightbox}
+                className="text-xs font-mono text-primary hover:text-accent border border-primary/20 px-2 py-1 rounded bg-black/40"
+              >
+                [close]
+              </button>
             </div>
-          </div>
 
-          {/* Footer help */}
-          <div className="p-4 text-center text-[10px] font-mono text-muted/60 bg-gradient-to-t from-black/40 to-transparent">
-            // pinch to zoom • double tap to scale • swipe down to close
-          </div>
-        </div>
-      )}
+            {/* Interactive Zoomable Image container */}
+            <div
+              className="flex-1 w-full flex items-center justify-center overflow-hidden"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
+              <div
+                style={{
+                  transform: `translate(${translateX}px, ${translateY}px) scale(${scale})`,
+                  transition: translateX !== 0 || translateY !== 0 ? 'none' : 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
+                className="w-full max-h-[75vh] flex justify-center items-center"
+              >
+                <img
+                  src={list[lightboxActiveIndex].url}
+                  alt={list[lightboxActiveIndex].altText || name}
+                  className="max-w-full max-h-[75vh] object-contain pointer-events-none"
+                />
+              </div>
+            </div>
+
+            {/* Footer help */}
+            <div className="p-4 text-center text-[10px] font-mono text-muted/60 bg-gradient-to-t from-black/40 to-transparent">
+              // pinch to zoom • double tap to scale • swipe down to close
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

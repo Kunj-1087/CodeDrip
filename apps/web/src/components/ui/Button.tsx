@@ -1,4 +1,5 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/cn';
 
 type Variant = 'primary' | 'secondary' | 'danger' | 'dark' | 'ghost';
@@ -73,14 +74,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   ref,
 ) {
   return (
-    <button
+    <motion.button
       ref={ref}
       type={type}
       disabled={disabled || loading}
       // aria-busy so assistive tech announces the in-flight state.
       aria-busy={loading || undefined}
+      whileTap={{ scale: 0.97 }}
+      whileHover="hover"
       className={cn(
-        'relative inline-flex select-none items-center justify-center gap-2 font-semibold tracking-[0.01em]',
+        'relative inline-flex select-none items-center justify-center gap-2 font-semibold tracking-[0.01em] overflow-hidden',
         'transition-[background,box-shadow,transform,border-color,color] duration-150',
         'disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
@@ -90,18 +93,32 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       )}
       {...rest}
     >
+      {/* Shimmer gradient sweep on hover */}
+      {!disabled && !loading && (variant === 'primary' || variant === 'danger' || variant === 'dark') && (
+        <span className="absolute inset-0 block overflow-hidden rounded-[inherit] pointer-events-none z-0">
+          <motion.span 
+            className="absolute inset-0 block h-full w-full bg-gradient-to-r from-transparent via-white/15 to-transparent"
+            initial={{ x: '-100%' }}
+            variants={{
+              hover: { x: '100%' }
+            }}
+            transition={{ duration: 0.6, ease: 'easeInOut' }}
+          />
+        </span>
+      )}
+
       {/* Keep the label in flow even while loading (just hidden) so the button
           width is preserved — no layout shift when the spinner swaps in. */}
-      <span className={cn('inline-flex items-center gap-2', loading && 'invisible')}>
+      <span className={cn('relative z-10 inline-flex items-center gap-2', loading && 'invisible')}>
         {leftIcon}
         {children}
         {rightIcon}
       </span>
       {loading && (
-        <span className="absolute inset-0 grid place-items-center">
+        <span className="absolute inset-0 grid place-items-center z-10">
           <Spinner className={size === 'sm' ? 'h-3.5 w-3.5' : 'h-4 w-4'} />
         </span>
       )}
-    </button>
+    </motion.button>
   );
 });

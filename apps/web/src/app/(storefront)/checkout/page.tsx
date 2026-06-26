@@ -43,6 +43,7 @@ export default function CheckoutPage() {
   const [order, setOrder] = useState<CreatedOrder | null>(null);
   const [busy, setBusy] = useState(false);
   const [summaryExpanded, setSummaryExpanded] = useState(false);
+  const [shippingMethod, setShippingMethod] = useState<'Standard' | 'Express' | 'Next-Day'>('Standard');
 
   useEffect(() => {
     if (status !== 'authenticated') return;
@@ -115,6 +116,7 @@ export default function CheckoutPage() {
       const res = await api.post<{ order: CreatedOrder }>('/orders', {
         shippingAddress: address,
         couponCode: couponCode || undefined,
+        shippingMethod,
       });
       setOrder(res.order);
       setStep('payment');
@@ -146,16 +148,33 @@ export default function CheckoutPage() {
     }
   };
 
-  const preview = estimateTotals(subtotal, discount);
-  const summary = order
-    ? {
+  const shippingFee = useMemo(() => {
+    if (shippingMethod === 'Express') return 250;
+    if (shippingMethod === 'Next-Day') return 500;
+    return subtotal >= 5000 ? 0 : 199;
+  }, [shippingMethod, subtotal]);
+
+  const summary = useMemo(() => {
+    if (order) {
+      return {
         subtotal: order.subtotal,
         discount: order.discountAmount,
         shippingFee: order.shippingFee,
         taxAmount: order.taxAmount,
         total: order.total,
-      }
-    : { subtotal, discount, shippingFee: preview.shippingFee, taxAmount: preview.taxAmount, total: preview.total };
+      };
+    }
+    const taxable = Math.max(subtotal - discount, 0);
+    const taxAmount = Math.round(taxable * 0.18);
+    const total = taxable + shippingFee + taxAmount;
+    return {
+      subtotal,
+      discount,
+      shippingFee,
+      taxAmount,
+      total,
+    };
+  }, [order, subtotal, discount, shippingFee]);
 
   return (
     <div className="container-px py-10 sm:py-16">
@@ -243,6 +262,42 @@ export default function CheckoutPage() {
             <fieldset disabled={step === 'payment'} className="disabled:opacity-60">
               <AddressForm value={address} onChange={setAddress} />
             </fieldset>
+          </section>
+
+          {/* Shipping method */}
+          <section className="card glass-panel border-border bg-surface-2 p-6 rounded-2xl">
+            <h2 className="mb-4 text-xs font-mono uppercase tracking-widest text-accent">// shipping_method</h2>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {[
+                { key: 'Standard' as const, label: 'Standard', days: '5-8 days', price: subtotal >= 5000 ? 0 : 199 },
+                { key: 'Express' as const, label: 'Express', days: '2-3 days', price: 250 },
+                { key: 'Next-Day' as const, label: 'Next-Day', days: '1 day', price: 500 },
+              ].map((m) => (
+                <button
+                  key={m.key}
+                  type="button"
+                  onClick={() => setShippingMethod(m.key)}
+                  className={`rounded-xl border p-4 text-left transition-all ${
+                    shippingMethod === m.key
+                      ? 'border-primary bg-primary/10 shadow-[0_0_12px_rgba(108,99,255,0.15)]'
+                      : 'border-border bg-surface hover:border-primary/40'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-ink">{m.label}</span>
+                    <span className={`flex h-4 w-4 items-center justify-center rounded-full border-2 ${
+                      shippingMethod === m.key ? 'border-primary' : 'border-border'
+                    }`}>
+                      {shippingMethod === m.key && <span className="h-2 w-2 rounded-full bg-primary" />}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-[10px] text-muted font-mono">{m.days}</p>
+                  <p className="mt-1.5 text-sm font-bold text-ink">
+                    {m.price === 0 ? 'Free' : formatCurrency(m.price, currency)}
+                  </p>
+                </button>
+              ))}
+            </div>
           </section>
 
           {/* Delivery info */}

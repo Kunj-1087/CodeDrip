@@ -7,6 +7,7 @@ import { asyncHandler } from '../utils/asyncHandler.ts';
 import { parseOrThrow } from '../utils/validate.ts';
 import { authenticate } from '../middlewares/authenticate.ts';
 import { hashPassword, verifyPassword, revokeAllUserTokens, toPublicUser, type AuthUserRow } from '../services/authService.ts';
+import { uploadImages } from '../middlewares/upload.ts';
 
 const router = Router();
 router.use(authenticate);
@@ -15,7 +16,7 @@ router.get(
   '/',
   asyncHandler(async (req, res) => {
     const { rows } = await query<AuthUserRow>(
-      'SELECT id, email, password_hash, first_name, last_name, role FROM users WHERE id = $1',
+      'SELECT id, email, password_hash, first_name, last_name, role, avatar_url FROM users WHERE id = $1',
       [req.user!.id],
     );
     if (rows.length === 0) throw AppError.notFound('User not found');
@@ -33,8 +34,22 @@ router.patch(
   asyncHandler(async (req, res) => {
     const b = parseOrThrow(updateSchema, req.body);
     const { rows } = await query<AuthUserRow>(
-      'UPDATE users SET first_name = $1, last_name = $2 WHERE id = $3 RETURNING id, email, password_hash, first_name, last_name, role',
+      'UPDATE users SET first_name = $1, last_name = $2 WHERE id = $3 RETURNING id, email, password_hash, first_name, last_name, role, avatar_url',
       [b.firstName, b.lastName, req.user!.id],
+    );
+    res.json({ user: toPublicUser(rows[0]) });
+  }),
+);
+
+router.patch(
+  '/avatar',
+  uploadImages.single('avatar'),
+  asyncHandler(async (req, res) => {
+    if (!req.file) throw AppError.badRequest('No image file provided');
+    const avatarUrl = `/uploads/${req.file.filename}`;
+    const { rows } = await query<AuthUserRow>(
+      'UPDATE users SET avatar_url = $1 WHERE id = $2 RETURNING id, email, password_hash, first_name, last_name, role, avatar_url',
+      [avatarUrl, req.user!.id],
     );
     res.json({ user: toPublicUser(rows[0]) });
   }),

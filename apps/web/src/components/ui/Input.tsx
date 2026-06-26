@@ -14,7 +14,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 // border + ring to the danger token. Label/helper/error are wired with ids so the
 // field is announced correctly by screen readers (aria-describedby / aria-invalid).
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  { label, error, helper, leftIcon, id, className, ...rest },
+  { label, error, helper, leftIcon, id, className, placeholder, ...rest },
   ref,
 ) {
   const reactId = useId();
@@ -23,24 +23,20 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 
   return (
     <div className="w-full">
-      {label && (
-        <label htmlFor={inputId} className="mb-2 block text-sm font-medium text-muted">
-          {label}
-        </label>
-      )}
-
       <div className="relative">
         {leftIcon && (
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint">{leftIcon}</span>
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint z-10">{leftIcon}</span>
         )}
         <input
           ref={ref}
           id={inputId}
+          placeholder={placeholder || ' '}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}
           className={cn(
-            'w-full rounded-md border bg-surface px-3.5 py-2.5 text-sm text-ink',
-            'transition-[border-color,box-shadow] duration-100 placeholder:text-faint focus:outline-none focus:ring-2',
+            'peer w-full rounded-md border bg-surface px-3.5 text-sm text-ink',
+            label ? 'pt-5 pb-1.5' : 'py-2.5',
+            'transition-[border-color,box-shadow] duration-100 placeholder-transparent focus:outline-none focus:ring-2',
             leftIcon ? 'pl-10' : undefined,
             error
               ? 'border-danger focus:border-danger focus:ring-danger/15'
@@ -49,6 +45,19 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           )}
           {...rest}
         />
+        {label && (
+          <label 
+            htmlFor={inputId} 
+            className={cn(
+              "absolute top-1/2 -translate-y-1/2 text-sm text-muted pointer-events-none transition-all duration-150 transform origin-left z-10",
+              leftIcon ? "left-10" : "left-3.5",
+              "peer-focus:top-3.5 peer-focus:-translate-y-3.5 peer-focus:scale-75 peer-focus:text-primary",
+              "peer-[:not(:placeholder-shown)]:top-3.5 peer-[:not(:placeholder-shown)]:-translate-y-3.5 peer-[:not(:placeholder-shown)]:scale-75"
+            )}
+          >
+            {label}
+          </label>
+        )}
       </div>
 
       {error ? (
