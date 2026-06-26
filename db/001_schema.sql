@@ -49,7 +49,7 @@ CREATE TABLE store_settings (
     store_name       TEXT NOT NULL DEFAULT 'CodeDrip',
     logo_url         TEXT,
     favicon_url      TEXT,
-    -- Brand defaults are the "Claude" warm palette: terra cotta primary, warm
+    -- Brand defaults are the default warm palette: terra cotta primary, warm
     -- near-black secondary (dark hero / high-commit buttons), amber accent.
     primary_color    TEXT NOT NULL DEFAULT '#d97757',
     secondary_color  TEXT NOT NULL DEFAULT '#1a1917',
