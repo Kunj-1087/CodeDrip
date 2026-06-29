@@ -32,7 +32,11 @@ const router = Router();
 // SameSite=Strict + HttpOnly + Secure(in prod). The refresh cookie is scoped to
 // /api/auth so it is never attached to ordinary API calls.
 function baseCookie(): CookieOptions {
-  return { httpOnly: true, secure: env.isProduction, sameSite: 'strict' };
+  return { 
+    httpOnly: true, 
+    secure: env.isProduction, 
+    sameSite: env.isProduction ? 'none' : 'strict' 
+  };
 }
 function setAuthCookies(res: Response, accessToken: string, refreshToken: string) {
   res.cookie('accessToken', accessToken, { ...baseCookie(), path: '/', maxAge: 15 * 60 * 1000 });
