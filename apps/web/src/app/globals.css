@@ -331,11 +331,10 @@ html.light {
   --bp-xl   : 1280px;  /* Desktop */
   --bp-2xl  : 1536px;  /* Large desktop / widescreen */
 
-  /* ── Font Families (loaded via next/font) ── */
-  --font-primary    : "JetBrains Mono", "Geist Mono", "IBM Plex Mono", "Fira Code", monospace;
-  --font-display    : "Space Mono", "JetBrains Mono", "IBM Plex Mono", monospace;
-  --font-code       : "JetBrains Mono", "Fira Code", "Courier New", monospace;
-  --font-ui         : "JetBrains Mono", "Geist Mono", monospace;
+  --font-primary    : var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display    : var(--font-heading), system-ui, sans-serif;
+  --font-code       : var(--font-mono), monospace;
+  --font-ui         : var(--font-sans), system-ui, sans-serif;
 
   /* ── Font Sizes ── */
   --text-xs         : clamp(0.65rem, 2vw, 0.75rem);

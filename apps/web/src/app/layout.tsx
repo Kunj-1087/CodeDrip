@@ -1,6 +1,6 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
-import { JetBrains_Mono, Space_Mono } from 'next/font/google';
+import { Plus_Jakarta_Sans, Outfit, JetBrains_Mono } from 'next/font/google';
 import { Providers } from '@/components/Providers';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/seo/JsonLd';
@@ -10,17 +10,24 @@ import type { StoreSettings } from '@/types';
 const storeName = process.env.NEXT_PUBLIC_STORE_NAME || 'CodeDrip';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800', '900'],
+  variable: '--font-heading',
+  display: 'swap',
+});
+
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-mono',
-  display: 'swap',
-});
-
-const spaceMono = Space_Mono({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-  variable: '--font-display',
   display: 'swap',
 });
 
@@ -115,7 +122,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const settings = await fetchJSON<StoreSettings>('/store-settings');
 
   return (
-    <html lang="en" className={`${jetbrainsMono.variable} ${spaceMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${plusJakartaSans.variable} ${outfit.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
 
