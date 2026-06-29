@@ -108,172 +108,173 @@ export function Navbar() {
 
       {/* Main Header Container */}
       <div className={cn(
-        "bg-surface-2/90 backdrop-blur-md border-b border-border/85 flex items-center justify-between px-4 md:px-8 gap-4 text-ink transition-all duration-300 ease-in-out gpu-layer",
+        "bg-surface-2/90 backdrop-blur-md border-b border-border/85 text-ink transition-all duration-300 ease-in-out gpu-layer",
         scrolled ? "h-12 md:h-12" : "h-14 md:h-[62px]"
       )}>
-        
-        {/* Left: Brand */}
-        <Link href="/" className="flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all" aria-label="CodeDrip Home">
-          <Logo size="md" />
-        </Link>
-
-        {/* Center: Search input (Desktop) */}
-        <form onSubmit={onSearch} className="hidden md:flex items-center relative flex-1 max-w-md mx-4" role="search">
-          <span className="absolute left-3 text-[#FF4D4D] font-bold text-sm pointer-events-none">{`>`}</span>
-          <input
-            id="search-input"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onFocus={(e) => {
-              e.target.blur();
-              window.dispatchEvent(new CustomEvent('open-search'));
-            }}
-            placeholder={PLACEHOLDERS[phIdx]}
-            aria-label="Search products"
-            className="w-full bg-surface-3 text-ink pl-8 pr-16 py-1.5 text-xs font-mono border border-border rounded-lg focus:border-[#FF4D4D] focus:ring-1 focus:ring-[#FF4D4D]/40 focus:outline-none transition-all placeholder-zinc-500 cursor-pointer"
-          />
-          <div className="absolute right-2 flex items-center pointer-events-none">
-            <kbd className="text-[9px] font-mono bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded border border-zinc-700 select-none shadow-sm">
-              Ctrl+K
-            </kbd>
-          </div>
-        </form>
-
-        {/* Right: Actions */}
-        <div className="flex items-center gap-3">
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="text-zinc-400 hover:text-[#FF4D4D] p-1.5 focus:outline-none transition-colors hidden md:block"
-            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-          >
-            {theme === 'dark' ? (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 transition-colors">
-                <circle cx="12" cy="12" r="5" />
-                <line x1="12" y1="1" x2="12" y2="3" />
-                <line x1="12" y1="21" x2="12" y2="23" />
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                <line x1="1" y1="12" x2="3" y2="12" />
-                <line x1="21" y1="12" x2="23" y2="12" />
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-              </svg>
-            ) : (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 transition-colors">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-              </svg>
-            )}
-          </button>
-
-          {/* Wishlist */}
-          <Link 
-            href="/wishlist" 
-            className="text-zinc-400 hover:text-[#FF4D4D] p-1.5 focus:outline-none transition-colors hidden md:block" 
-            aria-label="Wishlist"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 transition-colors">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
+        <div className="container-px flex h-full items-center justify-between gap-4">
+          {/* Left: Brand */}
+          <Link href="/" className="flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all" aria-label="CodeDrip Home">
+            <Logo size="md" />
           </Link>
 
-          {/* Cart */}
-          <Link 
-            href="/cart" 
-            id="cart-icon-nav"
-            className="text-zinc-400 hover:text-[#FF4D4D] p-1.5 focus:outline-none transition-colors relative" 
-            aria-label={`Cart with ${itemCount} items`}
-          >
-            <motion.div
-              animate={cartBouncing ? { scale: [1, 1.3, 1] } : {}}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 transition-colors">
-                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <path d="M16 10a4 4 0 0 1-8 0" />
-              </svg>
-            </motion.div>
-            {itemCount > 0 && (
-              <span 
-                key={itemCount}
-                className="absolute -top-1.5 -right-1.5 bg-[#FF4D4D] text-white text-[9px] font-mono font-bold rounded-full h-4 min-w-[1rem] flex items-center justify-center px-1 shadow-[0_0_8px_rgba(255,77,77,0.5)] transition-transform scale-110 duration-200 animate-pulse"
-              >
-                {itemCount}
-              </span>
-            )}
-          </Link>
-
-          {/* Account/Auth Dropdown */}
-          {status === 'authenticated' && user ? (
-            <div className="relative">
-              <button 
-                onClick={() => setMenuOpen((o) => !o)} 
-                className="text-xs font-mono font-bold tracking-wider uppercase bg-surface-3 border border-border hover:border-border-strong px-3 py-1.5 rounded-md hover:text-[#FF4D4D] active:scale-95 transition-all text-ink" 
-                aria-haspopup="menu" 
-                aria-expanded={menuOpen}
-              >
-                {user.firstName ?? 'Account'}
-              </button>
-              {menuOpen && (
-                <div
-                  className="absolute right-0 mt-2 w-48 p-1.5 bg-[#0D0D11] border border-white/[0.08] rounded-lg shadow-2xl z-50 font-mono text-xs animate-fade-in"
-                  role="menu"
-                  onMouseLeave={() => setMenuOpen(false)}
-                >
-                  <Link href="/profile" className="block rounded-md px-3 py-2 text-zinc-300 hover:text-white hover:bg-white/[0.05]" role="menuitem">
-                    $ cd ~/profile
-                  </Link>
-                  <Link href="/orders" className="block rounded-md px-3 py-2 text-zinc-300 hover:text-white hover:bg-white/[0.05]" role="menuitem">
-                    $ cd ~/orders
-                  </Link>
-                  {user.role === 'admin' && (
-                    <Link href="/admin" className="block rounded-md px-3 py-2 font-semibold text-[#FF4D4D] hover:bg-white/[0.05]" role="menuitem">
-                      $ sudo ./admin
-                    </Link>
-                  )}
-                  <button
-                    onClick={() => {
-                      setMenuOpen(false);
-                      void logout();
-                    }}
-                    className="block w-full rounded-md px-3 py-2 text-left text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                    role="menuitem"
-                  >
-                    $ exit (signout)
-                  </button>
-                </div>
-              )}
+          {/* Center: Search input (Desktop) */}
+          <form onSubmit={onSearch} className="hidden md:flex items-center relative flex-1 max-w-md mx-4" role="search">
+            <span className="absolute left-3 text-[#FF4D4D] font-bold text-sm pointer-events-none">{`>`}</span>
+            <input
+              id="search-input"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onFocus={(e) => {
+                e.target.blur();
+                window.dispatchEvent(new CustomEvent('open-search'));
+              }}
+              placeholder={PLACEHOLDERS[phIdx]}
+              aria-label="Search products"
+              className="w-full bg-surface-3 text-ink pl-8 pr-16 py-1.5 text-xs font-mono border border-border rounded-lg focus:border-[#FF4D4D] focus:ring-1 focus:ring-[#FF4D4D]/40 focus:outline-none transition-all placeholder-zinc-500 cursor-pointer"
+            />
+            <div className="absolute right-2 flex items-center pointer-events-none">
+              <kbd className="text-[9px] font-mono bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded border border-zinc-700 select-none shadow-sm">
+                Ctrl+K
+              </kbd>
             </div>
-          ) : (
-            <Link 
-              href="/auth/login" 
-              className="bg-[#FF4D4D] text-white px-3.5 py-1.5 font-mono text-xs font-bold tracking-wider uppercase rounded-md shadow-md hover:bg-[#E03E3E] hover:shadow-[0_0_15px_rgba(255,77,77,0.45)] transition-all duration-200 active:scale-95 text-center hidden md:inline-block"
-            >
-              AUTH.LOGIN()
-            </Link>
-          )}
+          </form>
 
-          {/* Hamburger Mobile Menu Toggle */}
-          <button
-            onClick={() => setMobileMenuOpen((o) => !o)}
-            className="text-zinc-400 hover:text-white p-1.5 focus:outline-none transition-colors md:hidden"
-            aria-label="Toggle mobile menu"
-            aria-expanded={mobileMenuOpen}
-          >
-            {mobileMenuOpen ? (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
+          {/* Right: Actions */}
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="text-zinc-400 hover:text-[#FF4D4D] p-1.5 focus:outline-none transition-colors hidden md:block"
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              {theme === 'dark' ? (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 transition-colors">
+                  <circle cx="12" cy="12" r="5" />
+                  <line x1="12" y1="1" x2="12" y2="3" />
+                  <line x1="12" y1="21" x2="12" y2="23" />
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                  <line x1="1" y1="12" x2="3" y2="12" />
+                  <line x1="21" y1="12" x2="23" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 transition-colors">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              )}
+            </button>
+
+            {/* Wishlist */}
+            <Link 
+              href="/wishlist" 
+              className="text-zinc-400 hover:text-[#FF4D4D] p-1.5 focus:outline-none transition-colors hidden md:block" 
+              aria-label="Wishlist"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 transition-colors">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
+            </Link>
+
+            {/* Cart */}
+            <Link 
+              href="/cart" 
+              id="cart-icon-nav"
+              className="text-zinc-400 hover:text-[#FF4D4D] p-1.5 focus:outline-none transition-colors relative" 
+              aria-label={`Cart with ${itemCount} items`}
+            >
+              <motion.div
+                animate={cartBouncing ? { scale: [1, 1.3, 1] } : {}}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 transition-colors">
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <path d="M16 10a4 4 0 0 1-8 0" />
+                </svg>
+              </motion.div>
+              {itemCount > 0 && (
+                <span 
+                  key={itemCount}
+                  className="absolute -top-1.5 -right-1.5 bg-[#FF4D4D] text-white text-[9px] font-mono font-bold rounded-full h-4 min-w-[1rem] flex items-center justify-center px-1 shadow-[0_0_8px_rgba(255,77,77,0.5)] transition-transform scale-110 duration-200 animate-pulse"
+                >
+                  {itemCount}
+                </span>
+              )}
+            </Link>
+
+            {/* Account/Auth Dropdown */}
+            {status === 'authenticated' && user ? (
+              <div className="relative">
+                <button 
+                  onClick={() => setMenuOpen((o) => !o)} 
+                  className="text-xs font-mono font-bold tracking-wider uppercase bg-surface-3 border border-border hover:border-border-strong px-3 py-1.5 rounded-md hover:text-[#FF4D4D] active:scale-95 transition-all text-ink" 
+                  aria-haspopup="menu" 
+                  aria-expanded={menuOpen}
+                >
+                  {user.firstName ?? 'Account'}
+                </button>
+                {menuOpen && (
+                  <div
+                    className="absolute right-0 mt-2 w-48 p-1.5 bg-[#0D0D11] border border-white/[0.08] rounded-lg shadow-2xl z-50 font-mono text-xs animate-fade-in"
+                    role="menu"
+                    onMouseLeave={() => setMenuOpen(false)}
+                  >
+                    <Link href="/profile" className="block rounded-md px-3 py-2 text-zinc-300 hover:text-white hover:bg-white/[0.05]" role="menuitem">
+                      $ cd ~/profile
+                    </Link>
+                    <Link href="/orders" className="block rounded-md px-3 py-2 text-zinc-300 hover:text-white hover:bg-white/[0.05]" role="menuitem">
+                      $ cd ~/orders
+                    </Link>
+                    {user.role === 'admin' && (
+                      <Link href="/admin" className="block rounded-md px-3 py-2 font-semibold text-[#FF4D4D] hover:bg-white/[0.05]" role="menuitem">
+                        $ sudo ./admin
+                      </Link>
+                    )}
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        void logout();
+                      }}
+                      className="block w-full rounded-md px-3 py-2 text-left text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                      role="menuitem"
+                    >
+                      $ exit (signout)
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
+              <Link 
+                href="/auth/login" 
+                className="bg-[#FF4D4D] text-white px-3.5 py-1.5 font-mono text-xs font-bold tracking-wider uppercase rounded-md shadow-md hover:bg-[#E03E3E] hover:shadow-[0_0_15px_rgba(255,77,77,0.45)] transition-all duration-200 active:scale-95 text-center hidden md:inline-block"
+              >
+                AUTH.LOGIN()
+              </Link>
             )}
-          </button>
+
+            {/* Hamburger Mobile Menu Toggle */}
+            <button
+              onClick={() => setMobileMenuOpen((o) => !o)}
+              className="text-zinc-400 hover:text-white p-1.5 focus:outline-none transition-colors md:hidden"
+              aria-label="Toggle mobile menu"
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
