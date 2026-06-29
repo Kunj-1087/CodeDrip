@@ -208,14 +208,14 @@ export function ProductCard({ product }: { product: Product }) {
       <div className="flex flex-1 flex-col p-3 md:p-4 relative bg-surface-2">
         {product.brand && <p className="eyebrow tracking-widest text-[9px] text-accent">{product.brand.toLowerCase()}</p>}
         <Link href={`/shop/${product.slug}`} className="mt-1 no-underline">
-          <h3 className="line-clamp-2 text-sm font-sans font-bold leading-snug text-white transition-colors lg:group-hover:text-primary">{product.name}</h3>
+          <h3 className="line-clamp-2 text-sm font-sans font-bold leading-snug text-ink transition-colors lg:group-hover:text-primary">{product.name}</h3>
         </Link>
 
         {/* Specs & Tags */}
         {specs.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1.5">
             {specs.slice(0, 2).map((s) => (
-              <span key={s} className="spec-pill border border-white/5 bg-surface text-[10px] py-0.5 px-2 rounded-md text-muted font-mono">{s}</span>
+              <span key={s} className="spec-pill border border-border bg-surface text-[10px] py-0.5 px-2 rounded-md text-muted font-mono">{s}</span>
             ))}
           </div>
         )}
@@ -254,8 +254,8 @@ export function ProductCard({ product }: { product: Product }) {
                 className={cn(
                   "flex h-5 w-5 items-center justify-center rounded-full border text-[8px] font-bold font-mono transition-all",
                   v.stockQuantity > 0
-                    ? "border-white/10 bg-white/5 text-muted hover:border-primary/50"
-                    : "border-white/5 bg-transparent text-muted/30 line-through opacity-40"
+                    ? "border-border bg-surface-3 text-muted hover:border-primary/50"
+                    : "border-border/50 bg-transparent text-muted/30 line-through opacity-40"
                 )}
               >
                 {v.name}
@@ -265,7 +265,7 @@ export function ProductCard({ product }: { product: Product }) {
         )}
 
         <div className="mt-4 flex items-baseline gap-2">
-          <span className="text-base font-mono font-bold text-white">{formatCurrency(product.basePrice, currency)}</span>
+          <span className="text-base font-mono font-bold text-ink">{formatCurrency(product.basePrice, currency)}</span>
           {discount > 0 && (
             <>
               <span className="text-xs font-mono text-faint line-through">{formatCurrency(product.compareAtPrice!, currency)}</span>

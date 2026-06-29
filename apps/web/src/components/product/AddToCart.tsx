@@ -50,22 +50,22 @@ export function AddToCart({
   if (compact) {
     return (
       <div className="flex items-center gap-3">
-        <div className="flex items-center rounded-xl border border-white/5 bg-black/20 overflow-hidden">
+        <div className="flex items-center rounded-xl border border-border bg-surface-2 overflow-hidden">
           <button
             onClick={() => setQty((q) => Math.max(1, q - 1))}
             disabled={!inStock}
-            className="grid h-11 w-11 place-items-center text-lg disabled:opacity-40 hover:bg-white/5 active:scale-90 transition-all text-white font-bold"
+            className="grid h-11 w-11 place-items-center text-lg disabled:opacity-40 hover:bg-surface-3 active:scale-90 transition-all text-ink font-bold"
             aria-label="Decrease quantity"
           >
             −
           </button>
-          <span className="flex h-11 w-8 items-center justify-center text-sm font-bold font-mono text-white tabular-nums" aria-live="polite">
+          <span className="flex h-11 w-8 items-center justify-center text-sm font-bold font-mono text-ink tabular-nums" aria-live="polite">
             {qty}
           </span>
           <button
             onClick={() => setQty((q) => Math.min(capped, q + 1))}
             disabled={!inStock || qty >= capped}
-            className="grid h-11 w-11 place-items-center text-lg disabled:opacity-40 hover:bg-white/5 active:scale-90 transition-all text-white font-bold"
+            className="grid h-11 w-11 place-items-center text-lg disabled:opacity-40 hover:bg-surface-3 active:scale-90 transition-all text-ink font-bold"
             aria-label="Increase quantity"
           >
             +
@@ -84,22 +84,22 @@ export function AddToCart({
 
   return (
     <div className="flex flex-wrap items-center gap-4">
-      <div className="flex items-center rounded-xl border border-white/5 bg-black/20 overflow-hidden">
+      <div className="flex items-center rounded-xl border border-border bg-surface-2 overflow-hidden">
         <button
           onClick={() => setQty((q) => Math.max(1, q - 1))}
           disabled={!inStock}
-          className="grid h-11 w-11 place-items-center text-lg disabled:opacity-40 hover:bg-white/5 active:scale-90 transition-all text-white font-bold"
+          className="grid h-11 w-11 place-items-center text-lg disabled:opacity-40 hover:bg-surface-3 active:scale-90 transition-all text-ink font-bold"
           aria-label="Decrease quantity"
         >
           −
         </button>
-        <span className="flex h-11 w-12 items-center justify-center text-sm font-bold font-mono text-white tabular-nums" aria-live="polite">
+        <span className="flex h-11 w-12 items-center justify-center text-sm font-bold font-mono text-ink tabular-nums" aria-live="polite">
           {qty}
         </span>
         <button
           onClick={() => setQty((q) => Math.min(capped, q + 1))}
           disabled={!inStock || qty >= capped}
-          className="grid h-11 w-11 place-items-center text-lg disabled:opacity-40 hover:bg-white/5 active:scale-90 transition-all text-white font-bold"
+          className="grid h-11 w-11 place-items-center text-lg disabled:opacity-40 hover:bg-surface-3 active:scale-90 transition-all text-ink font-bold"
           aria-label="Increase quantity"
         >
           +

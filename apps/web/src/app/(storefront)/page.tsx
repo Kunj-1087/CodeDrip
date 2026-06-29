@@ -104,7 +104,7 @@ export default async function HomePage() {
               <span>v1.0.0 Stable Drop Available</span>
             </div>
             
-            <h1 className="mt-6 text-[2.5rem] xs:text-[3rem] sm:text-6xl md:text-7xl font-bold leading-[1.05] tracking-tight font-sans text-white">
+            <h1 className="mt-6 text-[2.5rem] xs:text-[3rem] sm:text-6xl md:text-7xl font-bold leading-[1.05] tracking-tight font-sans text-ink">
               CodeDrip.<br />
               <span className="text-gradient">Wear Your Code.</span>
             </h1>
@@ -141,7 +141,7 @@ export default async function HomePage() {
         <ScrollReveal>
           <div className="max-w-2xl">
             <p className="font-mono text-xs uppercase tracking-wider text-primary">// category.list()</p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight text-white font-sans sm:text-4xl">Shop by developer stack</h2>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-ink font-sans sm:text-4xl">Shop by developer stack</h2>
           </div>
         </ScrollReveal>
         
@@ -160,7 +160,7 @@ export default async function HomePage() {
                   
                   <div>
                     <div className="flex items-center justify-between">
-                      <span className="rounded-xl bg-white/[0.04] p-3 text-white border border-white/5 group-hover:border-primary/30 transition-all">
+                      <span className="rounded-xl bg-surface-3 p-3 text-ink border border-border group-hover:border-primary/30 transition-all">
                         <CategoryIcon slug={c.slug} />
                       </span>
                       <span className="font-mono text-[10px] text-faint group-hover:text-primary transition-colors">
@@ -168,7 +168,7 @@ export default async function HomePage() {
                       </span>
                     </div>
                     
-                    <h3 className="mt-6 text-xl font-bold text-white font-sans tracking-tight group-hover:text-gradient transition-colors">
+                    <h3 className="mt-6 text-xl font-bold text-ink font-sans tracking-tight group-hover:text-gradient transition-colors">
                       {c.name}
                     </h3>
                     <p className="mt-2 text-sm text-muted font-sans max-w-md">
@@ -195,10 +195,10 @@ export default async function HomePage() {
       {featured?.products && featured.products.length > 0 && (
         <section className="container-px py-10">
           <ScrollReveal>
-            <div className="flex items-end justify-between border-b border-white/5 pb-4">
+            <div className="flex items-end justify-between border-b border-border pb-4">
               <div>
                 <p className="font-mono text-xs uppercase tracking-wider text-primary">// fetchFeatured(limit: 4)</p>
-                <h2 className="mt-1 text-2xl font-bold text-white font-sans">Top Sellers</h2>
+                <h2 className="mt-1 text-2xl font-bold text-ink font-sans">Top Sellers</h2>
               </div>
               <Link href="/shop?featured=true" className="font-mono text-xs font-semibold text-primary hover:text-accent transition-colors">
                 [view all] →
@@ -219,10 +219,10 @@ export default async function HomePage() {
       {trending?.products && trending.products.length > 0 && (
         <section className="container-px py-10">
           <ScrollReveal>
-            <div className="flex items-end justify-between border-b border-white/5 pb-4">
+            <div className="flex items-end justify-between border-b border-border pb-4">
               <div>
                 <p className="font-mono text-xs uppercase tracking-wider text-accent">// fetchTrending()</p>
-                <h2 className="mt-1 text-2xl font-bold text-white font-sans">Trending Drops</h2>
+                <h2 className="mt-1 text-2xl font-bold text-ink font-sans">Trending Drops</h2>
               </div>
               <Link href="/shop" className="font-mono text-xs font-semibold text-accent hover:text-primary transition-colors">
                 [view all] →
@@ -244,7 +244,7 @@ export default async function HomePage() {
         <ScrollReveal>
           <div className="text-center max-w-xl mx-auto">
             <p className="font-mono text-xs uppercase tracking-wider text-primary">// system.workflow</p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight text-white font-sans">Deployment Pipeline</h2>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-ink font-sans">Deployment Pipeline</h2>
             <p className="mt-2 text-sm text-muted">From staging layout commit straight to your physical closet.</p>
           </div>
         </ScrollReveal>
@@ -263,7 +263,7 @@ export default async function HomePage() {
                 <span className="grid h-12 w-12 place-items-center rounded-full bg-primary/10 border border-primary/30 text-sm font-bold text-primary font-mono animate-pulse-glow shadow-inner">
                   {step}
                 </span>
-                <h3 className="mt-6 text-lg font-bold text-white font-sans">{title}</h3>
+                <h3 className="mt-6 text-lg font-bold text-ink font-sans">{title}</h3>
                 <p className="mt-3 text-xs md:text-sm text-muted font-sans leading-relaxed">{desc}</p>
               </div>
             </ScrollRevealItem>
@@ -280,9 +280,9 @@ export default async function HomePage() {
             ['Designed by Coders', 'Every graphic is designed and tested by developers who actually write code. No fake code templates.', '💻'],
           ].map(([title, body, icon]) => (
             <ScrollRevealItem key={title} className="h-full">
-              <div className="card glass-panel p-6 border-white/5 hover:border-accent/30 transition-all h-full">
+              <div className="card glass-panel p-6 border-border hover:border-accent/30 transition-all h-full">
                 <div className="text-2xl">{icon}</div>
-                <h3 className="mt-4 font-bold text-white font-sans">{title}</h3>
+                <h3 className="mt-4 font-bold text-ink font-sans">{title}</h3>
                 <p className="mt-2 text-xs md:text-sm text-muted font-sans leading-relaxed">{body}</p>
               </div>
             </ScrollRevealItem>
@@ -295,20 +295,20 @@ export default async function HomePage() {
         <ScrollReveal>
           <div className="max-w-2xl border-l-2 border-primary pl-4">
             <p className="font-mono text-xs uppercase tracking-wider text-primary">// social_proof.log</p>
-            <h2 className="text-3xl font-bold tracking-tight text-white font-sans">Reviews from the console</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-ink font-sans">Reviews from the console</h2>
           </div>
         </ScrollReveal>
         <ScrollReveal staggerChildren className="mt-10 grid gap-6 md:grid-cols-3">
           {TESTIMONIALS.map((t) => (
             <ScrollRevealItem key={t.name} className="h-full">
-              <figure className="card glass-panel p-8 border-white/5 hover:border-primary/20 transition-all flex flex-col justify-between h-full">
+              <figure className="card glass-panel p-8 border-border hover:border-primary/20 transition-all flex flex-col justify-between h-full">
                 <blockquote className="text-sm italic leading-relaxed text-muted font-sans">"{t.quote}"</blockquote>
                 <figcaption className="mt-6 flex items-center gap-3">
                   <span className="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-accent grid place-items-center text-xs font-mono font-bold text-white">
                     {t.name.charAt(0)}
                   </span>
                   <div>
-                    <span className="block text-xs font-semibold text-white font-sans">{t.name}</span>
+                    <span className="block text-xs font-semibold text-ink font-sans">{t.name}</span>
                     <span className="block text-[10px] text-faint font-mono">{t.role}</span>
                   </div>
                 </figcaption>
@@ -325,7 +325,7 @@ export default async function HomePage() {
             <div className="pointer-events-none absolute -right-24 -top-24 h-48 w-48 rounded-full bg-accent/5 blur-3xl" />
             
             <p className="font-mono text-xs uppercase tracking-wider text-accent">~/subscribe-changelog</p>
-            <h2 className="mt-2 text-2xl font-bold text-white font-sans sm:text-3xl">Subscribe to the changelog</h2>
+            <h2 className="mt-2 text-2xl font-bold text-ink font-sans sm:text-3xl">Subscribe to the changelog</h2>
             <p className="mt-3 text-xs md:text-sm text-muted font-sans max-w-lg mx-auto">
               Get notified about small-batch drop announcements, restocks, and exclusive API keys (discount codes) before anyone else.
             </p>
@@ -340,15 +340,15 @@ export default async function HomePage() {
         <ScrollReveal>
           <div className="max-w-2xl mx-auto text-center">
             <p className="font-mono text-xs uppercase tracking-wider text-primary">// man codedrip</p>
-            <h2 className="mt-1 text-2xl font-bold text-white font-sans sm:text-3xl">Frequently Asked Questions</h2>
+            <h2 className="mt-1 text-2xl font-bold text-ink font-sans sm:text-3xl">Frequently Asked Questions</h2>
           </div>
         </ScrollReveal>
         
-        <ScrollReveal staggerChildren className="mx-auto mt-8 max-w-3xl divide-y divide-white/5 border-t border-b border-white/5">
+        <ScrollReveal staggerChildren className="mx-auto mt-8 max-w-3xl divide-y divide-border border-t border-b border-border">
           {FAQS.map((f) => (
             <ScrollRevealItem key={f.q}>
               <details className="group py-5">
-                <summary className="cursor-pointer list-none font-medium text-white marker:content-none font-mono text-sm">
+                <summary className="cursor-pointer list-none font-medium text-ink marker:content-none font-mono text-sm">
                   <span className="flex items-center justify-between gap-4">
                     <span className="hover:text-primary transition-colors">$ man {f.q.slice(0, -1).toLowerCase()}</span>
                     <span className="text-muted transition-transform group-open:rotate-45 font-mono text-lg">+</span>

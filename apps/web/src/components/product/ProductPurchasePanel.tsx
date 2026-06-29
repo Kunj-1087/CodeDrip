@@ -61,10 +61,10 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
       {product.categoryName && (
         <p className="font-mono text-xs uppercase tracking-wider text-accent">// {product.categoryName.toLowerCase()}</p>
       )}
-      <h1 className="text-xl sm:text-3xl font-sans font-bold tracking-tight text-white line-clamp-3 leading-tight">{product.name}</h1>
+      <h1 className="text-xl sm:text-3xl font-sans font-bold tracking-tight text-ink line-clamp-3 leading-tight">{product.name}</h1>
 
       {/* Social Share Row */}
-      <div className="flex items-center gap-4 text-xs font-mono text-muted border-b border-white/5 pb-4">
+      <div className="flex items-center gap-4 text-xs font-mono text-muted border-b border-border pb-4">
         <span className="text-[10px] uppercase tracking-widest text-faint">share.pkg:</span>
         <button
           onClick={() => {
@@ -114,20 +114,20 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
         ) : (
           <span className="text-xs text-muted">no.reviews()</span>
         )}
-        {product.brand && <span className="text-xs text-muted border-l border-white/5 pl-4">dist: {product.brand.toLowerCase()}</span>}
+        {product.brand && <span className="text-xs text-muted border-l border-border pl-4">dist: {product.brand.toLowerCase()}</span>}
       </div>
 
       {/* Key specs as monospace pills */}
       {topSpecs(product, 4).length > 0 && (
         <div className="flex flex-wrap gap-2">
           {topSpecs(product, 4).map((s) => (
-            <span key={s} className="spec-pill border border-white/5 bg-white/[0.02] text-xs font-mono rounded-lg px-3 py-1 text-muted">{s}</span>
+            <span key={s} className="spec-pill border border-border bg-surface-2 text-xs font-mono rounded-lg px-3 py-1 text-muted">{s}</span>
           ))}
         </div>
       )}
 
       {/* Price block */}
-      <div className="flex flex-wrap items-center gap-3 bg-black/15 p-4 rounded-xl border border-white/5">
+      <div className="flex flex-wrap items-center gap-3 bg-surface-3 p-4 rounded-xl border border-border">
         <span className="text-2xl font-bold font-mono text-danger">{formatCurrency(price, currency)}</span>
         {product.compareAtPrice && product.compareAtPrice > price && (
           <>
@@ -167,7 +167,7 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
 
       {/* Tech tags */}
       {product.tags && product.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 pt-2 border-t border-white/5">
+        <div className="flex flex-wrap gap-1.5 pt-2 border-t border-border">
           {product.tags.map((tag) => (
             <span
               key={tag.slug}

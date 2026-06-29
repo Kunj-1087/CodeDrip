@@ -37,7 +37,7 @@ export function VariantSelector({
       {/* Color Swatches Layer */}
       <div>
         <p className="font-mono text-xs font-semibold uppercase tracking-wider text-faint">
-          Color — <span className="text-white">{selectedColor}</span>
+          Color — <span className="text-ink">{selectedColor}</span>
         </p>
         <div className="mt-2 flex gap-3">
           {MOCK_COLORS.map((c) => {
@@ -50,7 +50,7 @@ export function VariantSelector({
                 title={c.name}
                 className={cn(
                   "relative h-8 w-8 rounded-full border flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95",
-                  active ? "border-primary ring-2 ring-primary/40" : "border-white/10"
+                  active ? "border-primary ring-2 ring-primary/40" : "border-border"
                 )}
                 style={{ backgroundColor: c.code }}
               >
@@ -87,8 +87,8 @@ export function VariantSelector({
                   'relative flex h-11 w-full md:w-11 items-center justify-center font-mono text-sm font-bold transition-all duration-200 overflow-hidden',
                   'rounded-xl border outline-none',
                   selected && 'border-primary bg-primary/10 text-primary shadow-[0_0_12px_rgba(108,99,255,0.25)] ring-1 ring-primary/40',
-                  !selected && !out && 'border-white/10 bg-black/15 text-white hover:border-primary/50 hover:bg-surface-3 hover:-translate-y-0.5 active:translate-y-0',
-                  out && 'cursor-not-allowed border-white/5 text-muted/30 bg-black/5 opacity-55',
+                  !selected && !out && 'border-border bg-surface text-ink hover:border-primary/50 hover:bg-surface-3 hover:-translate-y-0.5 active:translate-y-0',
+                  out && 'cursor-not-allowed border-border/40 text-muted/30 bg-surface-2 opacity-55',
                 )}
               >
                 {v.name}

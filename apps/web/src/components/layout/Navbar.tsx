@@ -108,7 +108,7 @@ export function Navbar() {
 
       {/* Main Header Container */}
       <div className={cn(
-        "bg-[#0A0A0A]/90 backdrop-blur-md border-b border-white/[0.05] flex items-center justify-between px-4 md:px-8 gap-4 text-white transition-all duration-300 ease-in-out gpu-layer",
+        "bg-surface-2/90 backdrop-blur-md border-b border-border/85 flex items-center justify-between px-4 md:px-8 gap-4 text-ink transition-all duration-300 ease-in-out gpu-layer",
         scrolled ? "h-12 md:h-12" : "h-14 md:h-[62px]"
       )}>
         
@@ -130,7 +130,7 @@ export function Navbar() {
             }}
             placeholder={PLACEHOLDERS[phIdx]}
             aria-label="Search products"
-            className="w-full bg-[#16161A] text-white pl-8 pr-16 py-1.5 text-xs font-mono border border-white/10 rounded-lg focus:border-[#FF4D4D] focus:ring-1 focus:ring-[#FF4D4D]/40 focus:outline-none transition-all placeholder-zinc-500 cursor-pointer"
+            className="w-full bg-surface-3 text-ink pl-8 pr-16 py-1.5 text-xs font-mono border border-border rounded-lg focus:border-[#FF4D4D] focus:ring-1 focus:ring-[#FF4D4D]/40 focus:outline-none transition-all placeholder-zinc-500 cursor-pointer"
           />
           <div className="absolute right-2 flex items-center pointer-events-none">
             <kbd className="text-[9px] font-mono bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded border border-zinc-700 select-none shadow-sm">
@@ -209,7 +209,7 @@ export function Navbar() {
             <div className="relative">
               <button 
                 onClick={() => setMenuOpen((o) => !o)} 
-                className="text-xs font-mono font-bold tracking-wider uppercase bg-zinc-900 border border-zinc-800 hover:border-zinc-700 px-3 py-1.5 rounded-md hover:text-[#FF4D4D] active:scale-95 transition-all text-white" 
+                className="text-xs font-mono font-bold tracking-wider uppercase bg-surface-3 border border-border hover:border-border-strong px-3 py-1.5 rounded-md hover:text-[#FF4D4D] active:scale-95 transition-all text-ink" 
                 aria-haspopup="menu" 
                 aria-expanded={menuOpen}
               >
@@ -278,7 +278,7 @@ export function Navbar() {
       </div>
 
       {/* Category Row (Desktop only) */}
-      <nav className="bg-[#121212] border-b border-white/[0.03] h-10 hidden md:flex items-center justify-center gap-8 overflow-x-auto text-[11px] font-mono tracking-[0.1em] text-zinc-400 select-none px-4" aria-label="Categories">
+      <nav className="bg-surface border-b border-border h-10 hidden md:flex items-center justify-center gap-8 overflow-x-auto text-[11px] font-mono tracking-[0.1em] text-muted select-none px-4" aria-label="Categories">
         {LINKS.map((l) => {
           const active = isLinkActive(l);
           return (
@@ -308,7 +308,7 @@ export function Navbar() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
             className={cn(
-              "fixed inset-x-0 bottom-0 bg-[#0A0A0A]/98 backdrop-blur-xl z-40 md:hidden flex flex-col font-mono text-zinc-300 p-6 gap-6 border-t border-white/[0.05] overflow-y-auto transition-all duration-300",
+              "fixed inset-x-0 bottom-0 bg-surface-2/98 backdrop-blur-xl z-40 md:hidden flex flex-col font-mono text-ink p-6 gap-6 border-t border-border overflow-y-auto transition-all duration-300",
               scrolled ? "top-[84px]" : "top-[92px]"
             )}
           >
@@ -331,7 +331,7 @@ export function Navbar() {
                   window.dispatchEvent(new CustomEvent('open-search'));
                 }}
                 placeholder="search codedrip..."
-                className="w-full bg-[#16161A] text-white pl-8 pr-4 py-2.5 text-sm font-mono border border-white/10 rounded-lg focus:border-[#FF4D4D] focus:ring-1 focus:ring-[#FF4D4D]/40 focus:outline-none transition-all cursor-pointer"
+                className="w-full bg-surface-3 text-ink pl-8 pr-4 py-2.5 text-sm font-mono border border-border rounded-lg focus:border-[#FF4D4D] focus:ring-1 focus:ring-[#FF4D4D]/40 focus:outline-none transition-all cursor-pointer"
               />
             </motion.form>
 
