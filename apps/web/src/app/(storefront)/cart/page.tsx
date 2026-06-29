@@ -30,7 +30,7 @@ export default function CartPage() {
       <div className="container-px py-20 text-center">
         <h1 className="text-2xl font-bold text-ink font-mono">Staging is empty</h1>
         <p className="mt-2 text-muted font-mono">Nothing staged for deployment. Add some threads to your wardrobe.</p>
-        <Link href="/shop" className="btn-primary mt-6 inline-flex px-6 py-3 font-mono">
+        <Link href="/shop" className="btn btn-primary mt-6 inline-flex px-6 py-3 font-mono">
           ls ./shop
         </Link>
       </div>
@@ -58,10 +58,10 @@ export default function CartPage() {
           <div className="mt-4 rounded-lg border border-border bg-surface p-3 text-xs leading-relaxed text-muted font-mono">
             Physical t-shirts will be shipped after deployment. Average delivery: 5-8 business days.
           </div>
-          <Link href="/checkout" className="btn-primary mt-4 w-full py-3 font-mono">
+          <Link href="/checkout" className="btn btn-primary mt-4 w-full py-3 font-mono">
             Push to Production →
           </Link>
-          <Link href="/shop" className="btn-ghost mt-2 w-full font-mono">
+          <Link href="/shop" className="btn btn-ghost mt-2 w-full font-mono">
             Continue shopping
           </Link>
         </aside>
