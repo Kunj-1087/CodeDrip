@@ -5,6 +5,7 @@ import { asyncHandler } from '../utils/asyncHandler.ts';
 import { parseOrThrow } from '../utils/validate.ts';
 import { authenticate } from '../middlewares/authenticate.ts';
 import { createOrderFromCart, listOrdersForUser, getOrderDetail } from '../services/orderService.ts';
+import { query } from '../config/database.ts';
 
 const router = Router();
 router.use(authenticate);

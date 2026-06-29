@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { BottomNav } from '@/components/layout/BottomNav';
@@ -14,7 +15,9 @@ import { PageAnimatePresence } from '@/components/layout/PageAnimatePresence';
 export default function StorefrontLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar />
+      <Suspense fallback={<div className="h-16 bg-background" />}>
+        <Navbar />
+      </Suspense>
       <main className="flex-1 page-content">
         <PageAnimatePresence>{children}</PageAnimatePresence>
       </main>
