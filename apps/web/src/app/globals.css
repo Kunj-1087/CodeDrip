@@ -81,64 +81,64 @@ html.dark {
    ═══════════════════════════════════════════════════════════════════════════ */
 html.light {
   /* ── Backgrounds ── */
-  --bg-primary        : 244 244 245; /* #F4F4F5 — Cool off-white page bg */
-  --bg-secondary      : 255 255 255; /* #FFFFFF — White panel/surface */
-  --bg-tertiary       : 255 255 255; /* #FFFFFF — White elevated surface */
-  --bg-elevated       : 255 255 255; /* #FFFFFF — White card/modal elevation */
-  --bg-overlay        : 255 255 255; /* rgba(255,255,255,0.85) */
-  --bg-hover          : 204 0 0;     /* rgba(204,0,0,0.04) */
-  --bg-active         : 204 0 0;     /* rgba(204,0,0,0.08) */
+  --bg-primary        : 248 248 248; /* #F8F8F8 — Clean white-ish page bg */
+  --bg-secondary      : 241 241 243; /* #F1F1F3 — Subtle separation layer */
+  --bg-tertiary       : 241 241 243; /* #F1F1F3 — Subtle separation layer */
+  --bg-elevated       : 255 255 255; /* #FFFFFF — Pure white card/modal layer */
+  --bg-overlay        : 255 255 255; /* #FFFFFF — Pure white overlay */
+  --bg-hover          : 192 57 43;   /* #C0392B hover channel base */
+  --bg-active         : 192 57 43;   /* #C0392B active channel base */
   --bg-code           : 24 24 27;    /* #18181B — Keep code blocks dark (inverted) */
 
-  /* ── Red Accent System (Blood Red #CC0000) ── */
+  /* ── Red Accent System (Refined dark red #C0392B) ── */
   --red-50            : 254 242 242; /* #FEF2F2 */
   --red-100           : 254 226 226; /* #FEE2E2 */
   --red-200           : 254 202 202; /* #FECACA */
   --red-300           : 252 165 165; /* #FCA5A5 */
   --red-400           : 248 113 113; /* #F87171 */
-  --red-500           : 204 0 0;     /* #CC0000 — PRIMARY */
-  --red-600           : 163 0 0;     /* #A30000 */
+  --red-500           : 192 57 43;   /* #C0392B — PRIMARY Brand Red */
+  --red-600           : 169 50 38;   /* #A93226 — Hover Red */
 
-  --accent-primary    : 204 0 0;     /* #CC0000 — MAIN ACCENT */
-  --accent-hover      : 163 0 0;     /* #A30000 */
-  --accent-active     : 128 0 0;     /* #800000 */
-  --accent-muted      : 204 0 0;     /* rgba(204,0,0,0.12) */
-  --accent-border     : 204 0 0;     /* rgba(204,0,0,0.30) */
+  --accent-primary    : 192 57 43;   /* #C0392B — MAIN ACCENT */
+  --accent-hover      : 169 50 38;   /* #A93226 */
+  --accent-active     : 142 40 30;   /* Slightly darker */
+  --accent-muted      : 192 57 43;   /* #C0392B */
+  --accent-border     : 192 57 43;   /* #C0392B */
 
   /* ── Text ── */
-  --text-primary      : 9 9 11;      /* #09090B — Near-black headings */
-  --text-secondary    : 63 63 70;    /* #3F3F46 — Body copy */
-  --text-muted        : 113 113 122; /* #71717A — Muted labels, captions */
-  --text-accent       : 204 0 0;     /* #CC0000 — Red accent text */
+  --text-primary      : 15 15 15;    /* #0F0F0F — Near-black headings */
+  --text-secondary    : 107 114 128; /* #6B7280 — Body copy */
+  --text-muted        : 156 163 175; /* #9CA3AF — Muted captions/disabled */
+  --text-accent       : 192 57 43;   /* #C0392B — Red accent text */
   --text-inverse      : 255 255 255; /* #FFFFFF */
   --text-code         : 244 244 245; /* #F4F4F5 — Code text (on dark #18181B bg) */
 
   /* ── Borders ── */
-  --border-default    : 228 228 231; /* rgba(228,228,231,0.5) */
-  --border-subtle     : 228 228 231; /* rgba(228,228,231,0.3) */
-  --border-accent     : 204 0 0;     /* rgba(204,0,0,0.25) */
-  --border-strong     : 228 228 231; /* rgba(228,228,231,0.8) */
+  --border-default    : 228 228 231; /* #E4E4E7 border */
+  --border-subtle     : 244 244 245; /* #F4F4F5 border */
+  --border-accent     : 192 57 43;   /* #C0392B border */
+  --border-strong     : 212 212 216; /* #D4D4D8 border */
 
   /* ── Surfaces ── */
-  --glass-bg          : 255 255 255; /* rgba(255,255,255,0.70) */
-  --glass-border      : 228 228 231; /* rgba(228,228,231,0.06) */
+  --glass-bg          : 255 255 255; /* Pure white bg for panels */
+  --glass-border      : 228 228 231; /* #E4E4E7 border */
   --glass-blur        : 16px;
 
   /* ── Semantic ── */
   --success           : 22 163 74;   /* #16A34A */
   --warning           : 217 119 6;   /* #D97706 */
-  --error             : 204 0 0;     /* #CC0000 */
+  --error             : 192 57 43;   /* #C0392B */
   --info              : 37 99 235;   /* #2563EB */
 
   /* ── Shadows ── */
-  --shadow-xs         : 0 1px 2px rgba(9, 9, 11, 0.04);
-  --shadow-sm         : 0 1px 3px rgba(9, 9, 11, 0.05), 0 1px 2px rgba(9, 9, 11, 0.03);
-  --shadow-md         : 0 4px 6px rgba(9, 9, 11, 0.06), 0 2px 4px rgba(9, 9, 11, 0.04);
-  --shadow-lg         : 0 10px 15px rgba(9, 9, 11, 0.06), 0 4px 6px rgba(9, 9, 11, 0.04);
-  --shadow-xl         : 0 20px 25px rgba(9, 9, 11, 0.08), 0 10px 10px rgba(9, 9, 11, 0.05);
-  --shadow-bottom-nav : 0 -2px 12px rgba(9, 9, 11, 0.04);
-  --accent-glow       : 0 0 20px rgba(204, 0, 0, 0.08);
-  --accent-glow-strong: 0 0 40px rgba(204, 0, 0, 0.15);
+  --shadow-xs         : 0 1px 2px rgba(15, 15, 15, 0.03);
+  --shadow-sm         : 0 1px 3px rgba(15, 15, 15, 0.05), 0 1px 2px rgba(15, 15, 15, 0.02);
+  --shadow-md         : 0 4px 6px rgba(15, 15, 15, 0.04), 0 2px 4px rgba(15, 15, 15, 0.03);
+  --shadow-lg         : 0 10px 15px rgba(15, 15, 15, 0.05), 0 4px 6px rgba(15, 15, 15, 0.03);
+  --shadow-xl         : 0 20px 25px rgba(15, 15, 15, 0.06), 0 10px 10px rgba(15, 15, 15, 0.04);
+  --shadow-bottom-nav : 0 -2px 12px rgba(15, 15, 15, 0.03);
+  --accent-glow       : 0 0 20px rgba(192, 57, 43, 0.06);
+  --accent-glow-strong: 0 0 40px rgba(192, 57, 43, 0.12);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -260,16 +260,26 @@ html.light {
 
   /* ── Glass panels in content area ── */
   .page-content .glass-panel {
-    background: rgb(255 255 255);
-    border-color: rgb(228 228 231);
+    background: #FFFFFF !important;
+    border-color: #E4E4E7 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .page-content .glass-panel:hover {
+    border-color: #C0392B !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+  }
+  .page-content .glass-panel [class*="bg-primary/10"] {
+    display: none !important;
   }
 
   /* ── CTA Buttons in hero ── */
   .page-content .btn.bg-gradient-to-r {
-    box-shadow: 0 4px 16px rgba(204, 0, 0, 0.2);
+    box-shadow: 0 4px 16px rgba(192, 57, 43, 0.2);
   }
   .page-content .btn.bg-gradient-to-r:hover {
-    box-shadow: 0 8px 24px rgba(204, 0, 0, 0.3);
+    box-shadow: 0 8px 24px rgba(192, 57, 43, 0.3);
   }
 
   /* ── Secondary/outline CTA button ── */
@@ -278,25 +288,40 @@ html.light {
     border-color: rgb(228 228 231);
   }
   .page-content .btn.border-border:hover {
-    border-color: rgb(204 0 0);
-    color: rgb(204 0 0);
+    border-color: #C0392B;
+    color: #C0392B;
   }
 
   /* ── Deployment step number circles ── */
   .page-content .rounded-full.border-primary\/30.bg-primary\/10 {
-    background: rgb(254 242 242);
-    border-color: rgb(254 202 202);
-    box-shadow: none;
+    background: #FEF2F2 !important;
+    border-color: #FECACA !important;
+    color: #C0392B !important;
+    box-shadow: none !important;
   }
 
   /* ── Section headings in content ── */
   .page-content .border-l-2.border-primary {
-    border-color: rgb(204 0 0);
+    border-color: #C0392B;
   }
 
   /* ── Newsletter card ── */
   .page-content .bg-gradient-to-br.from-primary\/5 {
-    border-color: rgba(204, 0, 0, 0.15);
+    border-color: rgba(192, 57, 43, 0.15);
+  }
+
+  /* ── Code-comment style labels override ── */
+  .page-content p.font-mono[class*="text-primary"],
+  .page-content p.font-mono[class*="text-accent"] {
+    color: #C0392B !important;
+    background-color: #FEF2F2 !important;
+    border: 1px solid #FECACA !important;
+    padding: 3px 8px !important;
+    border-radius: 4px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    font-size: 10px !important;
+    letter-spacing: 0.05em !important;
   }
 
   /* ── Footer: keep dark even in light mode ── */
